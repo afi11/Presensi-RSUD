@@ -1,20 +1,22 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Image,
   Text,
   FlatList,
-  TouchableOpacity,
   useWindowDimensions,
   StyleSheet,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
-import {CardLate, CardNotLate, CardRiwayatPresensi, HeaderNotBack} from '../../components';
+import {
+  CardLate,
+  CardNotLate,
+  CardRiwayatPresensi,
+  HeaderWithBack,
+} from '../../components';
 
 const mingguIni = () => {
-  const navigation = useNavigation();
-
   const [data, setData] = useState([
     {
       tgl: 'Sen, 24 Jan 2022',
@@ -36,37 +38,19 @@ const mingguIni = () => {
     },
   ]);
 
-  const gotoScreen = screen => {
-    navigation.navigate(screen);
-  };
-
   return (
     <>
       <View
         style={{
           width: '100%',
           flexDirection: 'row',
-          marginTop: 10,
-          marginBottom: 20,
-        }}>
-        <CardNotLate />
-        <CardLate />
-      </View>
-      <View
-        style={{
-          width: '100%',
-          flexDirection: 'row',
           marginBottom: 10,
+          marginTop: 16,
           justifyContent: 'space-between',
         }}>
         <Text style={{color: '#3D3442', fontSize: 16, fontWeight: '500'}}>
           Riwayat Presensi
         </Text>
-        <TouchableOpacity onPress={() => gotoScreen('AllPresensi')}>
-          <Text style={{color: '#A173C6', fontSize: 16, fontWeight: '500'}}>
-            Lihat Semua
-          </Text>
-        </TouchableOpacity>
       </View>
       <CardRiwayatPresensi
         tgl={'Sen, 24 Jan 2022'}
@@ -113,18 +97,54 @@ const mingguIni = () => {
   );
 };
 
-const bulanIni = () => (
-  <View
-    style={{
-      width: '100%',
-      flexDirection: 'row',
-      marginTop: 10,
-      marginBottom: 16,
-    }}>
-    <CardNotLate />
-    <CardLate />
-  </View>
-);
+const bulanIni = () => {
+  return (
+    <>
+      <View
+        style={{
+          width: '100%',
+          flexDirection: 'row',
+          marginBottom: 10,
+          marginTop: 16,
+          justifyContent: 'space-between',
+        }}>
+        <Text style={{color: '#3D3442', fontSize: 16, fontWeight: '500'}}>
+          Riwayat Presensi
+        </Text>
+      </View>
+      <CardRiwayatPresensi
+        tgl={'Sen, 24 Jan 2022'}
+        tepatWaktu={true}
+        waktuMasuk={'07:15:00'}
+        waktuPulang={'15:45:00'}
+      />
+      <CardRiwayatPresensi
+        tgl={'Sel, 25 Jan 2022'}
+        tepatWaktu={false}
+        waktuMasuk={'07:45:00'}
+        waktuPulang={'15:45:00'}
+      />
+      <CardRiwayatPresensi
+        tgl={'Rab, 26 Jan 2022'}
+        tepatWaktu={true}
+        waktuMasuk={'07:15:00'}
+        waktuPulang={'15:45:00'}
+      />
+      <CardRiwayatPresensi
+        tgl={'Kam, 27 Jan 2022'}
+        tepatWaktu={true}
+        waktuMasuk={'07:15:00'}
+        waktuPulang={'15:45:00'}
+      />
+      <CardRiwayatPresensi
+        tgl={'Jum, 28 Jan 2022'}
+        tepatWaktu={true}
+        waktuMasuk={'07:15:00'}
+        waktuPulang={'15:45:00'}
+      />
+    </>
+  );
+};
 
 const aturTanggal = () => (
   <View
@@ -155,7 +175,7 @@ const renderTabBar = props => (
   />
 );
 
-export default function Presensi() {
+export default function AllPresensi({navigation}) {
   const layout = useWindowDimensions();
 
   const [index, setIndex] = React.useState(0);
@@ -165,9 +185,13 @@ export default function Presensi() {
     {key: 'aturTanggal', title: 'Atur Tanggal'},
   ]);
 
+  const goBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.container}>
-       <HeaderNotBack />
+      <HeaderWithBack goBack={goBack} />
       <Text style={styles.header}>Rekap Presensi</Text>
       <TabView
         navigationState={{index, routes}}

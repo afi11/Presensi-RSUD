@@ -1,4 +1,5 @@
 import InputLogin from './InputLogin';
 import PasswordLogin from './PassowordLogin';
+import InputLabel from './InputLabel';
 
-export {InputLogin, PasswordLogin};
+export {InputLogin, PasswordLogin, InputLabel};

@@ -2,11 +2,11 @@ import React from 'react';
 import {TextInput, StyleSheet} from 'react-native';
 
 function InputLogin(props) {
-  const {placeHolder, onChange} = props;
+  const {placeHolder, inputType, onChange} = props;
   return (
     <TextInput
       style={style.inputLogin}
-      onChangeText={onChange}
+      onChangeText={e => onChange(e, inputType)}
       placeholder={placeHolder}
     />
   );

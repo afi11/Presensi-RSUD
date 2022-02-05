@@ -3,12 +3,12 @@ import {TextInput, StyleSheet, View} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 function PasswordLogin(props) {
-  const {placeHolder, onChange} = props;
+  const {placeHolder, inputType, onChange} = props;
   return (
     <View style={style.containerPassword}>
       <TextInput
         style={style.inputLogin}
-        onChangeText={onChange}
+        onChangeText={e => onChange(e, inputType)}
         secureTextEntry={true}
         placeholder={placeHolder}
       />

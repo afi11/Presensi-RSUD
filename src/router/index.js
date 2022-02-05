@@ -4,7 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Akun, Home, Login, Presensi} from '../screens';
+import {Akun, AllPresensi, EditAkun, Home, Login, Presensi} from '../screens';
 
 const LoginStack = createNativeStackNavigator();
 const BerandaStack = createNativeStackNavigator();
@@ -48,6 +48,13 @@ const PresensiPageStack = () => {
         name="Presensi"
         component={Presensi}
       />
+      <PresensiStack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="AllPresensi"
+        component={AllPresensi}
+      />
     </PresensiStack.Navigator>
   );
 };
@@ -61,6 +68,13 @@ const AkunPageStack = () => {
           headerShown: false,
         }}
         component={Akun}
+      />
+      <AkunStack.Screen
+        name="EditAkun"
+        options={{
+          headerShown: false,
+        }}
+        component={EditAkun}
       />
     </AkunStack.Navigator>
   );
@@ -145,4 +159,4 @@ function Router() {
   );
 }
 
-export default Router;
+export {LoginPageStack, Router};

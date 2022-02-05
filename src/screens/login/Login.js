@@ -1,8 +1,38 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  AsyncStorage,
+} from 'react-native';
+import RNRestart from 'react-native-restart';
+import {useSelector, useDispatch} from 'react-redux';
 import {ButtonLogin, InputLogin, PasswordLogin} from '../../components';
+import {putFormAuth} from '../../redux';
+import {POST_DATA} from '../../services';
 
 export default function Login({navigation}) {
+  const auth = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+
+  const onChangeInput = (value, type) => {
+    dispatch(putFormAuth(type, value));
+  };
+
+  const authLogin = () => {
+    console.log(auth.user);
+    POST_DATA('/auth/login', auth.user)
+      .then(res => {
+        console.log(res);
+        AsyncStorage.setItem('token', 'Bearer ' + res.access_token);
+        AsyncStorage.setItem('userId', JSON.stringify(res.user.id));
+        RNRestart.Restart();
+      })
+      .catch(err => console.log(err));
+  };
+
   const gotoScreen = screen => {
     navigation.navigate(screen);
   };
@@ -18,14 +48,23 @@ export default function Login({navigation}) {
         <Text style={styles.textHeader2}>
           Masuk dengan username dan password
         </Text>
-        <InputLogin onChange={null} placeHolder="Masukkan Username" />
-        <PasswordLogin onChange={null} placeHolder="Masukkan Password" />
+        <InputLogin
+          onChange={e => onChangeInput(e, 'username')}
+          inputType="username"
+          placeHolder="Masukkan Username"
+        />
+        <PasswordLogin
+          onChange={e => onChangeInput(e, 'password')}
+          inputType="password"
+          type="password"
+          placeHolder="Masukkan Password"
+        />
         <View style={styles.rowPassword}>
           <TouchableOpacity>
             <Text style={styles.textForgetPassword}>Lupa Kata Sandi?</Text>
           </TouchableOpacity>
         </View>
-        <ButtonLogin onPress={() => gotoScreen('Home')} />
+        <ButtonLogin onPress={() => authLogin()} />
       </View>
     </View>
   );

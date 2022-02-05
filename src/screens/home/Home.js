@@ -9,19 +9,32 @@ export default function Home() {
     <View style={styles.container}>
       <MapView
         style={styles.mapStyle}
-        showsUserLocation={false}
+        showsUserLocation={true}
+        userLocationUpdateInterval={5000}
         zoomEnabled={true}
         zoomControlEnabled={false}
+        followsUserLocation={true}
+        showsMyLocationButton={true}
         initialRegion={{
-          latitude: -7.8395057,
-          longitude: 112.0297273,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
+          latitude: -7.839502,
+          longitude: 112.031919,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
         }}>
         <Marker
-          coordinate={{latitude: -7.8395057, longitude: 112.0297273}}
+          coordinate={{latitude: -7.839502, longitude: 112.031919}}
           title={'RSUD Gambiran Kota Kediri'}
           description={'Lokasi Presensi'}
+        />
+        <MapView.Circle
+          center={{
+            latitude: -7.839502,
+            longitude: 112.031919,
+          }}
+          radius={100}
+          strokeWidth={2}
+          strokeColor="#8F50DF"
+          fillColor="rgba(186, 39, 245, 0.1)"
         />
       </MapView>
       <View style={styles.presensiInfo}>
