@@ -27,7 +27,7 @@ export default function Login({navigation}) {
       .then(res => {
         console.log(res);
         AsyncStorage.setItem('token', 'Bearer ' + res.access_token);
-        AsyncStorage.setItem('userId', JSON.stringify(res.user.id));
+        AsyncStorage.setItem('userId', res.user.pegawai_code);
         RNRestart.Restart();
       })
       .catch(err => console.log(err));

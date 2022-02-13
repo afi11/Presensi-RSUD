@@ -5,6 +5,7 @@ import {Router, LoginPageStack} from './src/router';
 import {getToken, getUserId} from './src/config';
 import store from './src/redux/store';
 import {Provider} from 'react-redux';
+import axios from 'axios';
 
 const App = () => {
   const [userId, setUserId] = useState(null);
@@ -19,6 +20,8 @@ const App = () => {
   useEffect(() => {
     getToken().then(res => {
       setToken(res);
+      console.log(res)
+      axios.defaults.headers.common['Authorization'] = res;
     });
   }, []);
 
