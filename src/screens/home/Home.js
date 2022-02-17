@@ -5,8 +5,10 @@ import {
   StyleSheet,
   SafeAreaView,
   PermissionsAndroid,
+  TouchableOpacity,
   Platform,
 } from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import {CameraScreen} from 'react-native-camera-kit';
 import MapView from 'react-native-maps';
 import {Marker} from 'react-native-maps';
@@ -15,8 +17,15 @@ import Geolocation from '@react-native-community/geolocation';
 import {getDistance, getPreciseDistance} from 'geolib';
 import {ButtonPresensi} from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
-import {fetchDataPresensi, putFormLokasiPresensi, putWaktuPresensiUser} from '../../redux';
+import {
+  fetchDataPresensi,
+  putFormLokasiPresensi,
+  putShiftId,
+  putWaktuPresensiShift,
+  putWaktuPresensiUser,
+} from '../../redux';
 import {genDateNow, getTimeNow, getUserId} from '../../config';
+import {POST_DATA} from '../../services';
 
 export default function Home() {
   const [qrvalue, setQrvalue] = useState('');
@@ -31,12 +40,49 @@ export default function Home() {
 
   const onBarcodeScan = result => {
     setQrvalue(result);
-    console.log(result);
     setOpneScanner(false);
-    dispatch(putWaktuPresensiUser(getTimeNow()));
+    if (parseInt(presensi.storePresensi.jarakPresensi) <= 80) {
+      if (result == 'seEfxclnPIieWtoF9rjrR2d7jb2Af0ALDnCRCe+PyLY=') {
+        startPresensi();
+      } else {
+        alert('QR Code tidak dikenali');
+      }
+    } else {
+      alert('Silahkan absen pada area RSUD GAMBIRAN ' + presensi.jarakPresensi);
+    }
+  };
+
+  // CHANGE VALUE SELECT BOX JADWAL SHIFT
+  const changeValueShift = e => {
+    var _FOUND = presensi.presensi.find(function (row, index) {
+      if (row.id == e) return true;
+    });
+    dispatch(putShiftId(e));
+    if (presensi.storePresensi.tipePresensi != null) {
+      if (presensi.storePresensi.tipePresensi == 'jam-masuk') {
+        dispatch(
+          putWaktuPresensiShift(
+            _FOUND.id,
+            _FOUND.jam_mulai_masuk,
+            _FOUND.jam_akhir_masuk,
+          ),
+        );
+      } else {
+        dispatch(
+          putWaktuPresensiShift(
+            _FOUND.id,
+            _FOUND.jam_awal_pulang,
+            _FOUND.jam_akhir_pulang,
+          ),
+        );
+      }
+    }
+
+    console.log(_FOUND);
   };
 
   const onOpneScanner = () => {
+    dispatch(putWaktuPresensiUser(getTimeNow()));
     // To Start Scanning
     if (Platform.OS === 'android') {
       async function requestCameraPermission() {
@@ -77,18 +123,9 @@ export default function Home() {
     return dis;
   };
 
-  const calculatePreciseDistance = (lat, long) => {
-    var pdis = getPreciseDistance(
-      {latitude: lat, longitude: long},
-      {latitude: -7.839502, longitude: 112.031919},
-    );
-    console.log(`Precise Distance\n\n${pdis} Meter\nOR\n${pdis / 1000} KM`);
-  };
-
   // FETCH WAKTU PRESENSI
   useEffect(() => {
     getUserId().then(res => {
-      console.log(res);
       dispatch(
         fetchDataPresensi(res, genDateNow(), presensi.activityCodePresensi),
       );
@@ -139,15 +176,13 @@ export default function Home() {
           currentLatitude,
           currentLongitude,
         );
-        calculatePreciseDistance(currentLatitude, currentLongitude);
         dispatch(
           putFormLokasiPresensi(
             jarakPresensi,
-            currentLongitude,
+            currentLatitude,
             currentLongitude,
           ),
         );
-
         setCurrentLongitude(currentLongitude);
         setCurrentLatitude(currentLatitude);
       },
@@ -176,12 +211,11 @@ export default function Home() {
           currentLatitude,
           currentLongitude,
         );
-        calculatePreciseDistance(currentLatitude, currentLongitude);
 
         dispatch(
           putFormLokasiPresensi(
             jarakPresensi,
-            currentLongitude,
+            currentLatitude,
             currentLongitude,
           ),
         );
@@ -199,39 +233,46 @@ export default function Home() {
     );
   };
 
+  const startPresensi = () => {
+    POST_DATA('/send-presensi', presensi.storePresensi)
+      .then(response => {
+        console.log(response);
+        getUserId().then(res => {
+          console.log(res);
+          dispatch(
+            fetchDataPresensi(res, genDateNow(), presensi.activityCodePresensi),
+          );
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       {opneScanner ? (
-        <View
-          style={{
-            backgroundColor: '#fff',
-            flexDirection: 'column',
-          }}>
-          <Icon
-            name="close"
-            size={36}
-            color={'#8F50DF'}
-            onPress={() => setOpneScanner(false)}
-          />
-          <Text
-            style={{
-              textAlign: 'center',
-              color: '#000000',
-              fontSize: 24,
-            }}>
-            Scan QR Code Pada Area Ditentukan
-          </Text>
+        <View style={{flexDirection: 'column'}}>
+          <View style={{flexDirection: 'row', padding: 8}}>
+            <TouchableOpacity onPress={() => setOpneScanner(false)}>
+              <Icon name="close" color={'#8F50DF'} size={32} />
+            </TouchableOpacity>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignContent: 'center',
+              }}>
+              <Text style={{color: '#8F50DF', fontSize: 18, marginLeft: 10}}>
+                Scan QRCode Absensi
+              </Text>
+            </View>
+          </View>
           <CameraScreen
             showFrame={true}
-            // Show/hide scan frame
             scanBarcode={true}
-            // Can restrict for the QR Code only
             laserColor={'blue'}
-            // Color can be of your choice
             frameColor={'yellow'}
-            // If frame is visible then frame color
             colorForScannerFrame={'black'}
-            // Scanner Frame color
             onReadCode={event =>
               onBarcodeScan(event.nativeEvent.codeStringValue)
             }
@@ -250,8 +291,8 @@ export default function Home() {
             initialRegion={{
               latitude: -7.839502,
               longitude: 112.031919,
-              latitudeDelta: 0.005,
-              longitudeDelta: 0.005,
+              latitudeDelta: 0.002,
+              longitudeDelta: 0.002,
             }}>
             <Marker
               coordinate={{latitude: -7.839502, longitude: 112.031919}}
@@ -271,42 +312,168 @@ export default function Home() {
           </MapView>
           <View style={styles.presensiInfo}>
             <View style={styles.containerPresensi}>
-              <Text style={styles.header1}>Lokasi</Text>
+              <Text style={styles.header}>Lokasi</Text>
               <Text style={styles.header2}>
-                Jl. Kapten Tendean No.16, Pakunden, Kec. Pesantren, Kota Kedir
+                Jl. Kapten Tendean No.16, Pakunden, Kec. Pesantren, Kota Kediri
               </Text>
-              <View style={styles.row}>
+              <View style={styles.marginBottom}></View>
+              {presensi.storePresensi.tipeWaktu != 'shift' ? (
                 <View style={styles.column}>
-                  <Text style={styles.header1}>Masuk</Text>
-                  <Text
-                    style={
-                      presensi.telatMasuk != '00:00:00'
-                        ? styles.late
-                        : styles.notlate
-                    }>
-                    {presensi.presensiMasuk != null
-                      ? presensi.presensiMasuk
-                      : '--:--:--'}
+                  <Text style={styles.header}>
+                    Jam Presensi{' '}
+                    {presensi.storePresensi.tipePresensi == 'jam-masuk'
+                      ? 'Masuk'
+                      : 'Pulang'}
                   </Text>
+                  <View style={styles.row}>
+                    <View style={styles.column}>
+                      <Text style={styles.header1}>Mulai</Text>
+                      <Text style={styles.info}>
+                        {presensi.presensi != null
+                          ? presensi.storePresensi.tipePresensi == 'jam-masuk'
+                            ? presensi.presensi.jam_mulai_masuk
+                            : presensi.presensi.jam_awal_pulang
+                          : ''}
+                      </Text>
+                    </View>
+                    <View>
+                      <Text style={styles.header1}>Akhir</Text>
+                      <Text style={styles.info}>
+                        {presensi.presensi != null
+                          ? presensi.storePresensi.tipePresensi == 'jam-masuk'
+                            ? presensi.presensi.jam_akhir_masuk
+                            : presensi.presensi.jam_akhir_pulang
+                          : ''}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
-                <View>
-                  <Text style={styles.header1}>Pulang</Text>
-                  <Text
-                    style={
-                      presensi.jarakPresensiPulang > 1
-                        ? styles.late
-                        : styles.notlate
-                    }>
-                    {presensi.presensiPulang != null
-                      ? presensi.presensiPulang
-                      : '--:--:--'}
+              ) : (
+                <View style={styles.column}>
+                  <Text style={styles.header1}>
+                    Jam Presensi{' '}
+                    {presensi.storePresensi.tipePresensi == 'jam-masuk'
+                      ? 'Masuk'
+                      : 'Pulang'}
                   </Text>
+                  <View style={styles.row}>
+                    <View style={styles.column}>
+                      <Text style={styles.header1}>Mulai</Text>
+                      <Text style={styles.info}>
+                        {presensi.presensi != null
+                          ? presensi.storePresensi.tipePresensi == 'jam-masuk'
+                            ? presensi.presensi[0].jam_mulai_masuk
+                            : presensi.presensi[0].jam_awal_pulang
+                          : ''}
+                      </Text>
+                    </View>
+                    <View>
+                      <Text style={styles.header1}>Akhir</Text>
+                      <Text style={styles.info}>
+                        {presensi.presensi != null
+                          ? presensi.storePresensi.tipePresensi == 'jam-masuk'
+                            ? presensi.presensi[0].jam_akhir_masuk
+                            : presensi.presensi[0].jam_akhir_pulang
+                          : ''}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              )}
+              <View style={styles.marginBottom}></View>
+              <View>
+                <Text style={styles.header}>Hasil Presensi</Text>
+                <View style={styles.row}>
+                  <View style={styles.column}>
+                    <Text style={styles.header1}>Masuk</Text>
+                    <Text
+                      style={
+                        presensi.telatMasuk != '00:00:00'
+                          ? styles.late
+                          : styles.notlate
+                      }>
+                      {presensi.presensiMasuk != null
+                        ? presensi.presensiMasuk
+                        : '--:--:--'}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text style={styles.header1}>Pulang</Text>
+                    <Text
+                      style={
+                        presensi.jarakPresensiPulang > 1
+                          ? styles.late
+                          : styles.notlate
+                      }>
+                      {presensi.presensiPulang != null
+                        ? presensi.presensiPulang
+                        : '--:--:--'}
+                    </Text>
+                  </View>
                 </View>
               </View>
-              <ButtonPresensi
-                onPress={onOpneScanner}
-                text="Absen Masuk Sekarang"
-              />
+
+              {presensi.storePresensi.tipeWaktu == 'shift' ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Text style={styles.header}>Jadwal Shift</Text>
+                  <View style={styles.selectJadwal}>
+                    {presensi.presensi != null ? (
+                      <Picker
+                        enabled={
+                          presensi.activityCodePresensi != null ? false : true
+                        }
+                        selectedValue={presensi.storePresensi.idWaktu}
+                        mode="dialog"
+                        style={{
+                          color: '#000',
+                          marginLeft: 6,
+                          marginVertical: -5,
+                        }}
+                        onValueChange={e => changeValueShift(e)}>
+                        {presensi.presensi.map(row => (
+                          <Picker.Item
+                            color="#fff"
+                            label={row.shift}
+                            value={row.id}
+                          />
+                        ))}
+                      </Picker>
+                    ) : (
+                      <></>
+                    )}
+                  </View>
+                </View>
+              ) : (
+                <></>
+              )}
+
+              <View style={styles.marginBottom}></View>
+              {presensi.isAbleToPresensi ? (
+                <ButtonPresensi
+                  onPress={onOpneScanner}
+                  enable={true}
+                  text={
+                    presensi.storePresensi.tipePresensi == 'jam-masuk'
+                      ? 'Absen Masuk Sekarang '
+                      : 'Absen Pulang Sekarang'
+                  }
+                />
+              ) : (
+                <ButtonPresensi
+                  onPress={onOpneScanner}
+                  enable={false}
+                  text={
+                    presensi.storePresensi.tipePresensi == 'jam-masuk'
+                      ? 'Absen Masuk Sekarang '
+                      : 'Absen Pulang Sekarang'
+                  }
+                />
+              )}
             </View>
           </View>
         </View>
@@ -340,18 +507,32 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 10,
-    height: 200,
+    height: 350,
     display: 'flex',
     flexDirection: 'column',
     padding: 16,
+    elevation: 4,
   },
-  header1: {
+  header: {
     color: '#17181B',
     fontSize: 16,
     fontWeight: '700',
   },
+  header1: {
+    color: '#17181B',
+    fontSize: 16,
+    fontWeight: '400',
+  },
+  marginBottom: {
+    marginBottom: 12,
+  },
   late: {
     color: '#BB3A3A',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  info: {
+    color: '#8F50DF',
     fontSize: 16,
     fontWeight: '700',
   },
@@ -383,5 +564,13 @@ const styles = StyleSheet.create({
   barcodeContainer: {
     width: '100%',
     height: '50%',
+  },
+  selectJadwal: {
+    borderColor: '#A884D8',
+    borderWidth: 1,
+    width: 150,
+    borderRadius: 8,
+    marginLeft: 16,
+    padding: -20,
   },
 });

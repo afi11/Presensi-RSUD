@@ -18,11 +18,16 @@ export default function Akun({navigation}) {
   const logout = async () => {
     try {
       await AsyncStorage.removeItem('token');
-      await AsyncStorage.setremoveItem('userId');
-      RNRestart.Restart;
+      await AsyncStorage.removeItem('userId');
+      RNRestart.Restart();
     } catch (error) {
       // Error retrieving data
     }
+  };
+
+  const removeDataUser = () => {
+    logout();
+    RNRestart.Restart;
   };
 
   return (

@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react';
-
+import {LogBox} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {Router, LoginPageStack} from './src/router';
 import {getToken, getUserId} from './src/config';
 import store from './src/redux/store';
 import {Provider} from 'react-redux';
 import axios from 'axios';
+
+LogBox.ignoreAllLogs();
 
 const App = () => {
   const [userId, setUserId] = useState(null);
@@ -20,7 +22,7 @@ const App = () => {
   useEffect(() => {
     getToken().then(res => {
       setToken(res);
-      console.log(res)
+      console.log(res);
       axios.defaults.headers.common['Authorization'] = res;
     });
   }, []);

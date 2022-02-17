@@ -1,13 +1,15 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
+import moment from 'moment';
+import {urlAssetImageProfil} from '../../config';
 
-function HeaderNotBack() {
+function HeaderNotBack({imgProfil}) {
   return (
     <View style={styles.rowUserInfo}>
-      <Text style={styles.tgl}>Rabu, 02 Febuari 2022</Text>
+      <Text style={styles.tgl}>{moment().format('D MMMM YYYY')}</Text>
       <Image
         style={styles.imgUser}
-        source={require('../../assets/images/jenny-sayang.jpg')}
+        source={{uri: urlAssetImageProfil + imgProfil}}
       />
     </View>
   );

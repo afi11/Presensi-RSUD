@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
   View,
-  Image,
   Text,
   FlatList,
   TouchableOpacity,
@@ -10,35 +9,35 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
-import {CardLate, CardNotLate, CardRiwayatPresensi, HeaderNotBack} from '../../components';
+import {
+  CardLate,
+  CardNotLate,
+  CardRiwayatPresensi,
+  HeaderNotBack,
+} from '../../components';
+import {useDispatch, useSelector} from 'react-redux';
+import {getUserId} from '../../config';
+import {
+  fetchHistoryPresensiMinggu,
+  fetchHistoryPresensiBulan,
+  getProfilData,
+} from '../../redux';
 
 const mingguIni = () => {
   const navigation = useNavigation();
-
-  const [data, setData] = useState([
-    {
-      tgl: 'Sen, 24 Jan 2022',
-      tepatWaktu: true,
-      waktuMasuk: '07:24:55',
-      waktuPulang: '16:24:55',
-    },
-    {
-      tgl: 'Sen, 24 Jan 2022',
-      tepatWaktu: true,
-      waktuMasuk: '07:24:55',
-      waktuPulang: '16:24:55',
-    },
-    {
-      tgl: 'Sen, 24 Jan 2022',
-      tepatWaktu: true,
-      waktuMasuk: '07:24:55',
-      waktuPulang: '16:24:55',
-    },
-  ]);
-
   const gotoScreen = screen => {
     navigation.navigate(screen);
   };
+
+  const historyPresensi = useSelector(state => state.historyPresensi);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    getUserId().then(res => {
+      dispatch(fetchHistoryPresensiMinggu(res));
+    });
+  }, []);
 
   return (
     <>
@@ -49,8 +48,8 @@ const mingguIni = () => {
           marginTop: 10,
           marginBottom: 20,
         }}>
-        <CardNotLate />
-        <CardLate />
+        <CardNotLate nTepat={historyPresensi.nTepatMinggu} />
+        <CardLate nTelat={historyPresensi.nTelatMinggu} />
       </View>
       <View
         style={{
@@ -68,63 +67,70 @@ const mingguIni = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      <CardRiwayatPresensi
-        tgl={'Sen, 24 Jan 2022'}
-        tepatWaktu={true}
-        waktuMasuk={'07:15:00'}
-        waktuPulang={'15:45:00'}
-      />
-      <CardRiwayatPresensi
-        tgl={'Sel, 25 Jan 2022'}
-        tepatWaktu={false}
-        waktuMasuk={'07:45:00'}
-        waktuPulang={'15:45:00'}
-      />
-      <CardRiwayatPresensi
-        tgl={'Rab, 26 Jan 2022'}
-        tepatWaktu={true}
-        waktuMasuk={'07:15:00'}
-        waktuPulang={'15:45:00'}
-      />
-      <CardRiwayatPresensi
-        tgl={'Kam, 27 Jan 2022'}
-        tepatWaktu={true}
-        waktuMasuk={'07:15:00'}
-        waktuPulang={'15:45:00'}
-      />
-      <CardRiwayatPresensi
-        tgl={'Jum, 28 Jan 2022'}
-        tepatWaktu={true}
-        waktuMasuk={'07:15:00'}
-        waktuPulang={'15:45:00'}
-      />
-      {/* <FlatList
-        data={data}
-        renderItem={(item, index) => (
+      <FlatList
+        data={historyPresensi.historyPresensiMinggu}
+        renderItem={({item}) => (
           <CardRiwayatPresensi
-            tgl={item.tgl}
-            tepatWaktu={item.tepatWaktu}
-            waktuMasuk={item.waktuMasuk}
-            waktuPulang={item.waktuPulang}
+            tanggalPresensi={item.tanggalPresensi}
+            idRuleTelatMasuk={item.idRuleTelatMasuk}
+            jamMasuk={item.jamMasuk}
+            jamPulang={item.jamPulang}
           />
         )}
-      /> */}
+        keyExtractor={item => item.id}
+      />
     </>
   );
 };
 
-const bulanIni = () => (
-  <View
-    style={{
-      width: '100%',
-      flexDirection: 'row',
-      marginTop: 10,
-      marginBottom: 16,
-    }}>
-    <CardNotLate />
-    <CardLate />
-  </View>
-);
+const bulanIni = () => {
+  const historyPresensi = useSelector(state => state.historyPresensi);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    getUserId().then(res => {
+      dispatch(fetchHistoryPresensiBulan(res));
+    });
+  }, []);
+
+  return (
+    <>
+      <View
+        style={{
+          width: '100%',
+          flexDirection: 'row',
+          marginTop: 10,
+          marginBottom: 20,
+        }}>
+        <CardNotLate nTepat={historyPresensi.nTepatBulan} />
+        <CardLate nTelat={historyPresensi.nTelatBulan} />
+      </View>
+      <View
+        style={{
+          width: '100%',
+          flexDirection: 'row',
+          marginBottom: 10,
+          justifyContent: 'space-between',
+        }}>
+        <Text style={{color: '#3D3442', fontSize: 16, fontWeight: '500'}}>
+          Riwayat Presensi
+        </Text>
+      </View>
+      <FlatList
+        data={historyPresensi.historyPresensiBulan}
+        renderItem={({item}) => (
+          <CardRiwayatPresensi
+            tanggalPresensi={item.tanggalPresensi}
+            idRuleTelatMasuk={item.idRuleTelatMasuk}
+            jamMasuk={item.jamMasuk}
+            jamPulang={item.jamPulang}
+          />
+        )}
+        keyExtractor={item => item.id}
+      />
+    </>
+  );
+};
 
 const aturTanggal = () => (
   <View
@@ -158,6 +164,9 @@ const renderTabBar = props => (
 export default function Presensi() {
   const layout = useWindowDimensions();
 
+  const auth = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     {key: 'mingguIni', title: 'Minggu Ini'},
@@ -165,9 +174,15 @@ export default function Presensi() {
     {key: 'aturTanggal', title: 'Atur Tanggal'},
   ]);
 
+  useEffect(() => {
+    getUserId().then(res => {
+      dispatch(getProfilData(res));
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
-       <HeaderNotBack />
+      <HeaderNotBack imgProfil={auth.profil.foto_pegawai} />
       <Text style={styles.header}>Rekap Presensi</Text>
       <TabView
         navigationState={{index, routes}}

@@ -2,17 +2,17 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-function CardLate() {
+const CardLate = ({nTelat}) => {
   return (
     <View style={styles.container}>
       <View style={styles.circle}>
         <Icon name="check-box" color={'#CC7C42'} size={24} />
       </View>
       <Text style={styles.text1}>Absen Terlambat</Text>
-      <Text style={styles.text2}>15</Text>
+      <Text style={styles.text2}>{nTelat}</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

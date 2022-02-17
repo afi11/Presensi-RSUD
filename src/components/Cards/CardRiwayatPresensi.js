@@ -1,14 +1,21 @@
 import React from 'react';
+import moment from 'moment';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
-function CardRiwayatPresensi(props) {
-  const {tgl, tepatWaktu, waktuMasuk, waktuPulang} = props;
+const CardRiwayatPresensi = ({
+  tanggalPresensi,
+  idRuleTelatMasuk,
+  jamMasuk,
+  jamPulang,
+}) => {
   return (
     <TouchableOpacity>
       <View style={styles.container}>
         <View style={styles.subContainer}>
-          <Text style={styles.textTgl}>{tgl}</Text>
-          {tepatWaktu ? (
+          <Text style={styles.textTgl}>
+            {moment(tanggalPresensi).format('D MMMM YYYY')}
+          </Text>
+          {idRuleTelatMasuk == null ? (
             <View style={styles.rowNotLate}>
               <Text style={styles.textRowNotLate}>Tepat Waktu</Text>
             </View>
@@ -19,13 +26,13 @@ function CardRiwayatPresensi(props) {
           )}
         </View>
         <View style={styles.rowDetPresensi}>
-          <Text style={styles.textDetPresensi}>Masuk : {waktuMasuk} | </Text>
-          <Text style={styles.textDetPresensi}>Keluar : {waktuPulang}</Text>
+          <Text style={styles.textDetPresensi}>Masuk : {jamMasuk} | </Text>
+          <Text style={styles.textDetPresensi}>Keluar : {jamPulang}</Text>
         </View>
       </View>
     </TouchableOpacity>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

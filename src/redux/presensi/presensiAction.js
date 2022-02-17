@@ -1,12 +1,19 @@
+import {POST_DATA} from '../../services';
 import {GET_DATA} from '../../services/get';
 import {
   FETCH_ACTIVITY_CODE_PRESENSI,
+  FETCH_DATE_PRESENSI_AFTER_GOHOME,
+  FETCH_ID_WAKTU_SHIFT,
+  FETCH_LIST_WAKTU_SHIFT,
   FETCH_LOKASI_PRESENSI,
   FETCH_PRESENSI_MASUK,
   FETCH_PRESENSI_PULANG,
   FETCH_TIME_PRESENSI,
   FETCH_TIPE_PEGAWAI_PRESENSI,
+  FETCH_TIPE_PEGAWAI_PRESENSI_SHIFT,
+  FETCH_WAKTU_PRESENSI_SHIFT,
   FETCH_WAKTU_PRESENSI_USER,
+  SET_ENABLE_PRESENSI,
 } from './presensiTypes';
 
 const putPresensiMasuk = (masuk, telat) => {
@@ -53,6 +60,7 @@ export const putFormTipePegawaiPresensi = (
   tipePresensi,
   pegawaiCode,
   idWaktu,
+  waktuMulaiPresensi,
   waktuKerja,
   activityCode,
 ) => {
@@ -62,8 +70,44 @@ export const putFormTipePegawaiPresensi = (
     tipePresensi: tipePresensi,
     pegawaiCode: pegawaiCode,
     idWaktu: idWaktu,
+    waktuMulaiPresensi: waktuMulaiPresensi,
     waktuKerja: waktuKerja,
     activityCode: activityCode,
+  };
+};
+
+export const putFormTipePegawaiPresensiShift = (
+  tipeWaktu,
+  tipePresensi,
+  pegawaiCode,
+  activityCode,
+) => {
+  return {
+    type: FETCH_TIPE_PEGAWAI_PRESENSI_SHIFT,
+    tipeWaktu: tipeWaktu,
+    tipePresensi: tipePresensi,
+    pegawaiCode: pegawaiCode,
+    activityCode: activityCode,
+  };
+};
+
+export const putWaktuPresensiShift = (
+  idWaktu,
+  waktuMulaiPresensi,
+  waktuKerja,
+) => {
+  return {
+    type: FETCH_WAKTU_PRESENSI_SHIFT,
+    idWaktu: idWaktu,
+    waktuMulaiPresensi: waktuMulaiPresensi,
+    waktuKerja: waktuKerja,
+  };
+};
+
+export const putShiftId = idShift => {
+  return {
+    type: FETCH_ID_WAKTU_SHIFT,
+    idWaktu: idShift,
   };
 };
 
@@ -74,12 +118,25 @@ export const putWaktuPresensiUser = waktuUser => {
   };
 };
 
+const putEnablePresensi = status => {
+  return {
+    type: SET_ENABLE_PRESENSI,
+    payload: status,
+  };
+};
+
+const putDatePresensiGoHome = tgl => {
+  return {
+    type: FETCH_DATE_PRESENSI_AFTER_GOHOME,
+    tanggalPresensi: tgl,
+  };
+};
+
 export const fetchDataPresensi = (pegawaiCode, currentData, activityCode) => {
   return dispatch => {
     GET_DATA(
       `fetch-time-presensi?pegawaiCode=${pegawaiCode}&currentData=${currentData}&activityCode=${activityCode}`,
     ).then(response => {
-      dispatch(putTimePresensi(response.data));
       dispatch(putPresensiMasuk(response.presensiMasuk, response.telatMasuk));
       dispatch(
         putPresensiPulang(
@@ -88,30 +145,71 @@ export const fetchDataPresensi = (pegawaiCode, currentData, activityCode) => {
         ),
       );
 
-      var tipePegawai = response.tipePegawai != 0 ? 'non-shift' : 'shift';
-      var tipePresensi = '';
-      if (response.presensiMasuk != '' && response.activityCode != null) {
-        tipePresensi = 'jam-pulang';
-      } else {
-        tipePresensi = 'jam-masuk';
-      }
-      var idWaktu = response.data != null ? response.data.id : null;
-      var waktuKerja =
-        response.data.waktuReguler != null ? response.data.waktuReguler : null;
+      var tipePegawai = response.tipePegawai != 0 ? 'shift' : 'non-shift';
+      var tipePresensi = response.tipePresensi;
 
-      dispatch(
-        putFormTipePegawaiPresensi(
-          tipePegawai,
-          tipePresensi,
-          pegawaiCode,
-          idWaktu,
-          waktuKerja,
-          response.activityCode != null
-            ? response.activityCode.activityCode
-            : null,
-        ),
-      );
-      dispatch(putActivityCodePresensi(response.activityCode.activityCode));
+      var waktuKerja = '';
+      var waktuMulaiPresensi = '';
+
+      if (response.tipePegawai == 0) {
+        var idWaktu = response.data != null ? response.data.id : null;
+        if (tipePresensi == 'jam-masuk') {
+          waktuKerja = response.data.jam_akhir_masuk;
+          waktuMulaiPresensi = response.data.jam_mulai_masuk;
+        } else {
+          waktuKerja = response.data.jam_akhir_pulang;
+          waktuMulaiPresensi = response.data.jam_awal_pulang;
+        }
+
+        dispatch(
+          putFormTipePegawaiPresensi(
+            tipePegawai,
+            tipePresensi,
+            pegawaiCode,
+            idWaktu,
+            waktuMulaiPresensi,
+            waktuKerja,
+            response.activityCode != null
+              ? response.activityCode.activityCode
+              : null,
+          ),
+        );
+      } else {
+        dispatch(
+          putFormTipePegawaiPresensiShift(
+            tipePegawai,
+            tipePresensi,
+            pegawaiCode,
+            response.activityCode != null
+              ? response.activityCode.activityCode
+              : null,
+          ),
+        );
+        dispatch(
+          putShiftId(
+            response.activityCode != null
+              ? response.activityCode.idWaktuShift
+              : null,
+          ),
+        );
+
+        if (response.activityCode != null) {
+          dispatch(
+            putWaktuPresensiShift(
+              response.data[0].id,
+              response.data[0].jam_awal_pulang,
+              response.data[0].jam_akhir_pulang,
+            ),
+          );
+        }
+      }
+
+      if (response.activityCode != null) {
+        dispatch(putActivityCodePresensi(response.activityCode.activityCode));
+        dispatch(putDatePresensiGoHome(response.activityCode.tanggalPresensi));
+      }
+      dispatch(putTimePresensi(response.data));
+      dispatch(putEnablePresensi(response.isAblePresensi));
     });
   };
 };

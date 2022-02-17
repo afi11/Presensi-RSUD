@@ -1,12 +1,17 @@
 import {
   FETCH_ACTIVITY_CODE_PRESENSI,
+  FETCH_DATE_PRESENSI_AFTER_GOHOME,
   FETCH_FORM_PEGAWAI_CODE,
+  FETCH_ID_WAKTU_SHIFT,
   FETCH_LOKASI_PRESENSI,
   FETCH_PRESENSI_MASUK,
   FETCH_PRESENSI_PULANG,
   FETCH_TIME_PRESENSI,
   FETCH_TIPE_PEGAWAI_PRESENSI,
+  FETCH_TIPE_PEGAWAI_PRESENSI_SHIFT,
+  FETCH_WAKTU_PRESENSI_SHIFT,
   FETCH_WAKTU_PRESENSI_USER,
+  SET_ENABLE_PRESENSI,
 } from './presensiTypes';
 
 const initialState = {
@@ -15,19 +20,16 @@ const initialState = {
   telatMasuk: null,
   jarakPresensiPulang: null,
   activityCodePresensi: null,
-  presensi: {
-    nama_shift: null,
-    jam_masuk: null,
-    jam_pulang: null,
-    pegawai_code: null,
-    tanggal: null,
-  },
+  isAbleToPresensi: null,
+  tanggalPresensi: null,
+  presensi: null,
   storePresensi: {
     tipeWaktu: null,
     tipePresensi: null,
     waktuPresensiUser: null,
     pegawaiCode: null,
     idWaktu: null,
+    waktuMulaiPresensi: null,
     waktuKerja: null,
     jarakPresensi: null,
     latitudePresensi: null,
@@ -70,6 +72,11 @@ const presensiReducer = (state = initialState, action) => {
           longitudePresensi: action.longitudePresensi,
         },
       };
+    case FETCH_DATE_PRESENSI_AFTER_GOHOME:
+      return {
+        ...state,
+        tanggalPresensi: action.tanggalPresensi,
+      };
     case FETCH_TIPE_PEGAWAI_PRESENSI:
       return {
         ...state,
@@ -79,8 +86,38 @@ const presensiReducer = (state = initialState, action) => {
           tipePresensi: action.tipePresensi,
           pegawaiCode: action.pegawaiCode,
           idWaktu: action.idWaktu,
+          waktuMulaiPresensi: action.waktuMulaiPresensi,
           waktuKerja: action.waktuKerja,
           activityCode: action.activityCode,
+        },
+      };
+    case FETCH_TIPE_PEGAWAI_PRESENSI_SHIFT:
+      return {
+        ...state,
+        storePresensi: {
+          ...state.storePresensi,
+          tipeWaktu: action.tipeWaktu,
+          tipePresensi: action.tipePresensi,
+          pegawaiCode: action.pegawaiCode,
+          activityCode: action.activityCode,
+        },
+      };
+    case FETCH_WAKTU_PRESENSI_SHIFT:
+      return {
+        ...state,
+        storePresensi: {
+          ...state.storePresensi,
+          idWaktu: action.idWaktu,
+          waktuMulaiPresensi: action.waktuMulaiPresensi,
+          waktuKerja: action.waktuKerja,
+        },
+      };
+    case FETCH_ID_WAKTU_SHIFT:
+      return {
+        ...state,
+        storePresensi: {
+          ...state.storePresensi,
+          idWaktu: action.idWaktu,
         },
       };
     case FETCH_WAKTU_PRESENSI_USER:
@@ -90,6 +127,11 @@ const presensiReducer = (state = initialState, action) => {
           ...state.storePresensi,
           waktuPresensiUser: action.waktuPresensiUser,
         },
+      };
+    case SET_ENABLE_PRESENSI:
+      return {
+        ...state,
+        isAbleToPresensi: action.payload,
       };
     default:
       return state;

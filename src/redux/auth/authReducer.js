@@ -1,10 +1,11 @@
-import {FORM_USER, IS_SUCCESS_AUTH} from './authTypes';
+import {FORM_USER, GET_PROFIL_USER, IS_SUCCESS_AUTH} from './authTypes';
 
 const initialState = {
   user: {
     username: null,
     password: null,
   },
+  profil: {},
   messageAuth: '',
   messageError: null,
   isSuccessAuth: false,
@@ -24,6 +25,11 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         isSuccessAuth: action.payload,
+      };
+    case GET_PROFIL_USER:
+      return {
+        ...state,
+        profil: action.payload,
       };
     default:
       return state;

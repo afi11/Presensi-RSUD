@@ -1,5 +1,19 @@
 import {getToken, getUserId} from './Auth';
-import {apiUrl} from './Url';
-import {genDateNow, getTimeNow} from './GenDate';
+import {apiUrl, urlAssetImageProfil} from './Url';
+import {
+  genDateNow,
+  getTimeNow,
+  compareTwoTimeMore,
+  getFullDay,
+} from './GenDate';
 
-export {getToken, getUserId, apiUrl, genDateNow, getTimeNow};
+export {
+  getToken,
+  getUserId,
+  apiUrl,
+  urlAssetImageProfil,
+  genDateNow,
+  getTimeNow,
+  getFullDay,
+  compareTwoTimeMore,
+};
