@@ -23,6 +23,7 @@ import {
   putShiftId,
   putWaktuPresensiShift,
   putWaktuPresensiUser,
+  setTimePresensiShift,
 } from '../../redux';
 import {genDateNow, getTimeNow, getUserId} from '../../config';
 import {POST_DATA} from '../../services';
@@ -58,11 +59,13 @@ export default function Home() {
       if (row.id == e) return true;
     });
     dispatch(putShiftId(e));
+    dispatch(setTimePresensiShift(_FOUND));
     if (presensi.storePresensi.tipePresensi != null) {
       if (presensi.storePresensi.tipePresensi == 'jam-masuk') {
         dispatch(
           putWaktuPresensiShift(
             _FOUND.id,
+            _FOUND.shift,
             _FOUND.jam_mulai_masuk,
             _FOUND.jam_akhir_masuk,
           ),
@@ -71,6 +74,7 @@ export default function Home() {
         dispatch(
           putWaktuPresensiShift(
             _FOUND.id,
+            _FOUND.shift,
             _FOUND.jam_awal_pulang,
             _FOUND.jam_akhir_pulang,
           ),
@@ -350,7 +354,7 @@ export default function Home() {
                 </View>
               ) : (
                 <View style={styles.column}>
-                  <Text style={styles.header1}>
+                  <Text style={styles.header}>
                     Jam Presensi{' '}
                     {presensi.storePresensi.tipePresensi == 'jam-masuk'
                       ? 'Masuk'
@@ -359,23 +363,35 @@ export default function Home() {
                   <View style={styles.row}>
                     <View style={styles.column}>
                       <Text style={styles.header1}>Mulai</Text>
-                      <Text style={styles.info}>
-                        {presensi.presensi != null
-                          ? presensi.storePresensi.tipePresensi == 'jam-masuk'
-                            ? presensi.presensi[0].jam_mulai_masuk
-                            : presensi.presensi[0].jam_awal_pulang
-                          : ''}
-                      </Text>
+                      {presensi.storePresensi.activityCode != null ? (
+                        <Text style={styles.info}>
+                          {presensi.presensi != null
+                            ? presensi.storePresensi.tipePresensi == 'jam-masuk'
+                              ? presensi.presensi[0].jam_mulai_masuk
+                              : presensi.presensi[0].jam_awal_pulang
+                            : ''}
+                        </Text>
+                      ) : (
+                        <Text style={styles.info}>
+                          {presensi.timePresensiShift.jam_mulai_masuk}
+                        </Text>
+                      )}
                     </View>
                     <View>
                       <Text style={styles.header1}>Akhir</Text>
-                      <Text style={styles.info}>
-                        {presensi.presensi != null
-                          ? presensi.storePresensi.tipePresensi == 'jam-masuk'
-                            ? presensi.presensi[0].jam_akhir_masuk
-                            : presensi.presensi[0].jam_akhir_pulang
-                          : ''}
-                      </Text>
+                      {presensi.storePresensi.activityCode != null ? (
+                        <Text style={styles.info}>
+                          {presensi.presensi != null
+                            ? presensi.storePresensi.tipePresensi == 'jam-masuk'
+                              ? presensi.presensi[0].jam_akhir_masuk
+                              : presensi.presensi[0].jam_akhir_pulang
+                            : presensi.timePresensiShift.jam_akhir_pulang}
+                        </Text>
+                      ) : (
+                        <Text style={styles.info}>
+                          {presensi.timePresensiShift.jam_akhir_pulang}
+                        </Text>
+                      )}
                     </View>
                   </View>
                 </View>
@@ -502,6 +518,7 @@ const styles = StyleSheet.create({
   presensiInfo: {
     width: '100%',
     padding: 18,
+    marginBottom: 16,
   },
   containerPresensi: {
     width: '100%',

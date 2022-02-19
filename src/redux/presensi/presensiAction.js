@@ -14,6 +14,7 @@ import {
   FETCH_WAKTU_PRESENSI_SHIFT,
   FETCH_WAKTU_PRESENSI_USER,
   SET_ENABLE_PRESENSI,
+  SET_TIME_PRESENSI_SHIFT,
 } from './presensiTypes';
 
 const putPresensiMasuk = (masuk, telat) => {
@@ -93,12 +94,14 @@ export const putFormTipePegawaiPresensiShift = (
 
 export const putWaktuPresensiShift = (
   idWaktu,
+  waktuShift,
   waktuMulaiPresensi,
   waktuKerja,
 ) => {
   return {
     type: FETCH_WAKTU_PRESENSI_SHIFT,
     idWaktu: idWaktu,
+    waktuShift: waktuShift,
     waktuMulaiPresensi: waktuMulaiPresensi,
     waktuKerja: waktuKerja,
   };
@@ -129,6 +132,16 @@ const putDatePresensiGoHome = tgl => {
   return {
     type: FETCH_DATE_PRESENSI_AFTER_GOHOME,
     tanggalPresensi: tgl,
+  };
+};
+
+export const setTimePresensiShift = row => {
+  return {
+    type: SET_TIME_PRESENSI_SHIFT,
+    jam_mulai_masuk: row.jam_mulai_masuk,
+    jam_akhir_masuk: row.jam_akhir_masuk,
+    jam_awal_pulang: row.jam_awal_pulang,
+    jam_akhir_pulang: row.jam_akhir_pulang,
   };
 };
 
@@ -197,6 +210,7 @@ export const fetchDataPresensi = (pegawaiCode, currentData, activityCode) => {
           dispatch(
             putWaktuPresensiShift(
               response.data[0].id,
+              response.data[0].shift,
               response.data[0].jam_awal_pulang,
               response.data[0].jam_akhir_pulang,
             ),

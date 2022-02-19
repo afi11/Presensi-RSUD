@@ -1,7 +1,6 @@
 import {
   FETCH_ACTIVITY_CODE_PRESENSI,
   FETCH_DATE_PRESENSI_AFTER_GOHOME,
-  FETCH_FORM_PEGAWAI_CODE,
   FETCH_ID_WAKTU_SHIFT,
   FETCH_LOKASI_PRESENSI,
   FETCH_PRESENSI_MASUK,
@@ -12,6 +11,7 @@ import {
   FETCH_WAKTU_PRESENSI_SHIFT,
   FETCH_WAKTU_PRESENSI_USER,
   SET_ENABLE_PRESENSI,
+  SET_TIME_PRESENSI_SHIFT,
 } from './presensiTypes';
 
 const initialState = {
@@ -23,12 +23,19 @@ const initialState = {
   isAbleToPresensi: null,
   tanggalPresensi: null,
   presensi: null,
+  timePresensiShift: {
+    jam_mulai_masuk: null,
+    jam_akhir_masuk: null,
+    jam_mulai_pulang: null,
+    jam_akhir_pulang: null,
+  },
   storePresensi: {
     tipeWaktu: null,
     tipePresensi: null,
     waktuPresensiUser: null,
     pegawaiCode: null,
     idWaktu: null,
+    waktuShift: null,
     waktuMulaiPresensi: null,
     waktuKerja: null,
     jarakPresensi: null,
@@ -108,6 +115,7 @@ const presensiReducer = (state = initialState, action) => {
         storePresensi: {
           ...state.storePresensi,
           idWaktu: action.idWaktu,
+          waktuShift: action.waktuShift,
           waktuMulaiPresensi: action.waktuMulaiPresensi,
           waktuKerja: action.waktuKerja,
         },
@@ -132,6 +140,16 @@ const presensiReducer = (state = initialState, action) => {
       return {
         ...state,
         isAbleToPresensi: action.payload,
+      };
+    case SET_TIME_PRESENSI_SHIFT:
+      return {
+        ...state,
+        timePresensiShift: {
+          jam_mulai_masuk: action.jam_mulai_masuk,
+          jam_akhir_masuk: action.jam_akhir_masuk,
+          jam_mulai_pulang: action.jam_mulai_pulang,
+          jam_akhir_pulang: action.jam_akhir_pulang,
+        },
       };
     default:
       return state;
