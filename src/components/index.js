@@ -1,4 +1,10 @@
-import {InputLogin, InputLabel, PasswordLogin} from './Inputs';
+import {
+  InputLogin,
+  InputLabel,
+  PasswordLogin,
+  InputDatePicker,
+  InputPickerFile,
+} from './Inputs';
 import {ButtonLogin, ButtonPresensi, ButtonSimpan} from './Buttons';
 import {CardNotLate, CardLate, CardRiwayatPresensi} from './Cards';
 import {HeaderNotBack, HeaderWithBack} from './Headers';
@@ -8,6 +14,8 @@ export {
   InputLogin,
   InputLabel,
   PasswordLogin,
+  InputDatePicker,
+  InputPickerFile,
   ButtonLogin,
   ButtonPresensi,
   ButtonSimpan,

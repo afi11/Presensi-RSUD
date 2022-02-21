@@ -1,7 +1,7 @@
 import React from 'react';
 import {TouchableOpacity, StyleSheet, Text} from 'react-native';
 
-function ButtonSimpan(props) {
+function ButtonAjukanIzin(props) {
   const {onPress, text} = props;
   return (
     <TouchableOpacity onPress={onPress} style={style.buttonPresensi}>
@@ -10,29 +10,26 @@ function ButtonSimpan(props) {
   );
 }
 
-const active = '#8F50DF';
-const disable = '#B185E9';
 const style = StyleSheet.create({
   buttonPresensi: {
-    backgroundColor: active,
-    padding: 12,
+    backgroundColor: '#A173C6',
+    padding: 6,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
     borderRadius: 10,
-    marginTop: 16,
-    marginBottom: 10,
+    marginTop: 10,
     // SHADOW
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 5,
+    width: 100,
   },
   textLogin: {
     color: '#FFF',
-    fontSize: 18,
+    fontSize: 16,
   },
 });
 
-export default ButtonSimpan;
+export default ButtonAjukanIzin;

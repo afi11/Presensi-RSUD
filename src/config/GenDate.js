@@ -12,6 +12,13 @@ export const getTimeNow = () => {
   return time;
 };
 
+export const formatDate = tanggal => {
+  var today = new Date(tanggal);
+  var date =
+    today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+  return date;
+};
+
 export const getFullDay = () => {
   return genDateNow() + ' ' + getTimeNow();
 };

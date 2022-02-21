@@ -4,11 +4,21 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Akun, AllPresensi, EditAkun, Home, Login, Presensi} from '../screens';
+import {
+  Akun,
+  AllPresensi,
+  EditAkun,
+  Home,
+  Login,
+  Presensi,
+  Cuti,
+  TambahCuti,
+} from '../screens';
 
 const LoginStack = createNativeStackNavigator();
 const BerandaStack = createNativeStackNavigator();
 const PresensiStack = createNativeStackNavigator();
+const CutiStack = createNativeStackNavigator();
 const AkunStack = createNativeStackNavigator();
 
 const Tab = createBottomTabNavigator();
@@ -59,6 +69,27 @@ const PresensiPageStack = () => {
   );
 };
 
+const CutiPageStack = () => {
+  return (
+    <CutiStack.Navigator>
+      <CutiStack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="Cuti"
+        component={Cuti}
+      />
+      <CutiStack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="TambahCuti"
+        component={TambahCuti}
+      />
+    </CutiStack.Navigator>
+  );
+};
+
 const AkunPageStack = () => {
   return (
     <AkunStack.Navigator>
@@ -98,7 +129,7 @@ function Router() {
             tabBarLabel: ({focused}) => (
               <Text
                 style={{
-                  fontSize: 16,
+                  fontSize: 12,
                   color: focused
                     ? activeTintLabelColor
                     : inactiveTintLabelColor,
@@ -107,7 +138,7 @@ function Router() {
               </Text>
             ),
             tabBarIcon: ({color, size}) => (
-              <Icon name="home" color={color} size={32} />
+              <Icon name="home" color={color} size={28} />
             ),
             headerShown: false,
           }}
@@ -119,7 +150,7 @@ function Router() {
             tabBarLabel: ({focused}) => (
               <Text
                 style={{
-                  fontSize: 16,
+                  fontSize: 12,
                   color: focused
                     ? activeTintLabelColor
                     : inactiveTintLabelColor,
@@ -128,7 +159,28 @@ function Router() {
               </Text>
             ),
             tabBarIcon: ({color, size}) => (
-              <Icon name="touch-app" color={color} size={32} />
+              <Icon name="touch-app" color={color} size={28} />
+            ),
+            headerShown: false,
+          }}
+        />
+        <Tab.Screen
+          name="CutiPageStack"
+          component={CutiPageStack}
+          options={{
+            tabBarLabel: ({focused}) => (
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: focused
+                    ? activeTintLabelColor
+                    : inactiveTintLabelColor,
+                }}>
+                Izin
+              </Text>
+            ),
+            tabBarIcon: ({color, size}) => (
+              <MaterialCommunityIcons name="file" color={color} size={28} />
             ),
             headerShown: false,
           }}
@@ -140,7 +192,7 @@ function Router() {
             tabBarLabel: ({focused}) => (
               <Text
                 style={{
-                  fontSize: 16,
+                  fontSize: 12,
                   color: focused
                     ? activeTintLabelColor
                     : inactiveTintLabelColor,
@@ -149,7 +201,7 @@ function Router() {
               </Text>
             ),
             tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons name="account" color={color} size={32} />
+              <MaterialCommunityIcons name="account" color={color} size={28} />
             ),
             headerShown: false,
           }}
