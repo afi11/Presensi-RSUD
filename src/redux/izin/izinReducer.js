@@ -1,13 +1,15 @@
-import {FETCH_RULE_IZIN, SET_FORM_IZIN} from './izinTypes';
+import {FETCH_IZIN_DATA, FETCH_RULE_IZIN, SET_FORM_IZIN} from './izinTypes';
 
 const initialState = {
   ruleIzins: [],
+  izins: [],
   ruleIzin: {
     pegawaiCode: null,
     idRuleIzin: null,
     keteranganIzin: null,
     tanggalMulaiIzin: null,
     tanggalAkhirIzin: null,
+    tipeWaktu: null,
     fileIzin: null,
     tipefile: null,
   },
@@ -15,6 +17,11 @@ const initialState = {
 
 const izinReducer = (state = initialState, action) => {
   switch (action.type) {
+    case FETCH_IZIN_DATA:
+      return {
+        ...state,
+        izins: action.payload,
+      };
     case FETCH_RULE_IZIN:
       return {
         ...state,

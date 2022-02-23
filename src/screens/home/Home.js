@@ -7,6 +7,8 @@ import {
   PermissionsAndroid,
   TouchableOpacity,
   Platform,
+  StatusBar,
+  useColorScheme,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {CameraScreen} from 'react-native-camera-kit';
@@ -15,8 +17,9 @@ import {Marker} from 'react-native-maps';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Geolocation from '@react-native-community/geolocation';
 import {getDistance, getPreciseDistance} from 'geolib';
-import {ButtonPresensi} from '../../components';
+import {ButtonLoading, ButtonPresensi} from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
+import {Snackbar} from 'react-native-paper';
 import {
   fetchDataPresensi,
   putFormLokasiPresensi,
@@ -29,12 +32,24 @@ import {genDateNow, getTimeNow, getUserId} from '../../config';
 import {POST_DATA} from '../../services';
 
 export default function Home() {
+  const isDarkMode = useColorScheme() === 'dark';
   const [qrvalue, setQrvalue] = useState('');
   const [opneScanner, setOpneScanner] = useState(false);
 
   const [currentLongitude, setCurrentLongitude] = useState('...');
   const [currentLatitude, setCurrentLatitude] = useState('...');
   const [locationStatus, setLocationStatus] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const [error, setError] = useState('');
+  const [visibleSuccess, setVisibleSuccess] = useState(false);
+  const [visibleFailed, setVisibleFailed] = useState(false);
+
+  const onShowSnackBarSuccess = () => setVisibleSuccess(true);
+  const onShowSnackBarFailed = () => setVisibleFailed(true);
+
+  const onDismissSnackBarSuccess = () => setVisibleSuccess(false);
+  const onDismissSnackBarFailed = () => setVisibleFailed(false);
 
   const presensi = useSelector(state => state.presensi);
   const dispatch = useDispatch();
@@ -46,10 +61,12 @@ export default function Home() {
       if (result == 'seEfxclnPIieWtoF9rjrR2d7jb2Af0ALDnCRCe+PyLY=') {
         startPresensi();
       } else {
-        alert('QR Code tidak dikenali');
+        setError('QR Code tidak dikenali');
+        onShowSnackBarFailed();
       }
     } else {
-      alert('Silahkan absen pada area RSUD GAMBIRAN ' + presensi.jarakPresensi);
+      setError('Silahkan absen pada area RSUD GAMBIRAN ');
+      onShowSnackBarFailed();
     }
   };
 
@@ -238,23 +255,27 @@ export default function Home() {
   };
 
   const startPresensi = () => {
+    setLoading(true);
     POST_DATA('/send-presensi', presensi.storePresensi)
-      .then(response => {
-        console.log(response);
+      .then(() => {
+        setLoading(false);
         getUserId().then(res => {
           console.log(res);
           dispatch(
             fetchDataPresensi(res, genDateNow(), presensi.activityCodePresensi),
           );
+          onShowSnackBarSuccess();
         });
       })
       .catch(err => {
-        console.log(err);
+        setError(err);
+        onShowSnackBarFailed();
       });
   };
 
   return (
     <SafeAreaView style={{flex: 1}}>
+      <StatusBar barStyle="light-content" />
       {opneScanner ? (
         <View style={{flexDirection: 'column'}}>
           <View style={{flexDirection: 'row', padding: 8}}>
@@ -310,8 +331,20 @@ export default function Home() {
               }}
               radius={100}
               strokeWidth={2}
-              strokeColor="#8F50DF"
-              fillColor="rgba(186, 39, 245, 0.1)"
+              strokeColor={
+                presensi.storePresensi.jarakPresensi == null
+                  ? '#f94a4a'
+                  : presensi.storePresensi.jarakPresensi <= 80
+                  ? '#14ad54'
+                  : '#f94a4a'
+              }
+              fillColor={
+                presensi.storePresensi.jarakPresensi == null
+                  ? 'rgba(234, 61, 61, 0.3)'
+                  : presensi.storePresensi.jarakPresensi <= 80
+                  ? 'rgba(96, 209, 127, 0.3)'
+                  : 'rgba(234, 61, 61, 0.3)'
+              }
             />
           </MapView>
           <View style={styles.presensiInfo}>
@@ -453,7 +486,7 @@ export default function Home() {
                         onValueChange={e => changeValueShift(e)}>
                         {presensi.presensi.map(row => (
                           <Picker.Item
-                            color="#fff"
+                            color={isDarkMode ? '#FFF' : '#000'}
                             label={row.shift}
                             value={row.id}
                           />
@@ -470,15 +503,21 @@ export default function Home() {
 
               <View style={styles.marginBottom}></View>
               {presensi.isAbleToPresensi ? (
-                <ButtonPresensi
-                  onPress={onOpneScanner}
-                  enable={true}
-                  text={
-                    presensi.storePresensi.tipePresensi == 'jam-masuk'
-                      ? 'Absen Masuk Sekarang '
-                      : 'Absen Pulang Sekarang'
-                  }
-                />
+                loading ? (
+                  <ButtonLoading tulisan="Loading..." />
+                ) : (
+                  <ButtonPresensi
+                    onPress={onOpneScanner}
+                    enable={true}
+                    text={
+                      presensi.storePresensi.tipePresensi == 'jam-masuk'
+                        ? 'Absen Masuk Sekarang '
+                        : 'Absen Pulang Sekarang'
+                    }
+                  />
+                )
+              ) : loading ? (
+                <ButtonLoading tulisan="Loading..." />
               ) : (
                 <ButtonPresensi
                   onPress={onOpneScanner}
@@ -490,6 +529,22 @@ export default function Home() {
                   }
                 />
               )}
+            </View>
+            <View style={{alignItems: 'center'}}>
+              <Snackbar
+                visible={visibleSuccess}
+                onDismiss={onDismissSnackBarSuccess}
+                style={{backgroundColor: '#0bc663'}}>
+                <Text style={{color: '#fff', fontSize: 18}}>
+                  Berhasil melakukan presensi
+                </Text>
+              </Snackbar>
+              <Snackbar
+                visible={visibleFailed}
+                onDismiss={onDismissSnackBarFailed}
+                style={{backgroundColor: '#cc1616'}}>
+                <Text style={{color: '#fff', fontSize: 18}}>{error}</Text>
+              </Snackbar>
             </View>
           </View>
         </View>

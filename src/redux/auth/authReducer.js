@@ -1,4 +1,9 @@
-import {FORM_USER, GET_PROFIL_USER, IS_SUCCESS_AUTH} from './authTypes';
+import {
+  FORM_USER,
+  GET_PROFIL_USER,
+  IS_SUCCESS_AUTH,
+  UPDATE_PROFIL_USER,
+} from './authTypes';
 
 const initialState = {
   user: {
@@ -6,6 +11,16 @@ const initialState = {
     password: null,
   },
   profil: {},
+  userUpdate: {
+    code: '',
+    nama: '',
+    nik: '',
+    email: '',
+    password: '',
+    konfirmasiPassword: '',
+    fotoUser: '',
+    tipefile: '',
+  },
   messageAuth: '',
   messageError: null,
   isSuccessAuth: false,
@@ -30,6 +45,14 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         profil: action.payload,
+      };
+    case UPDATE_PROFIL_USER:
+      return {
+        ...state,
+        userUpdate: {
+          ...state.userUpdate,
+          [action.inputType]: action.inputValue,
+        },
       };
     default:
       return state;

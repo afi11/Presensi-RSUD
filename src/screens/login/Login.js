@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   AsyncStorage,
+  StatusBar,
+  useColorScheme,
 } from 'react-native';
 import RNRestart from 'react-native-restart';
 import {useSelector, useDispatch} from 'react-redux';
@@ -14,7 +16,9 @@ import {putFormAuth} from '../../redux';
 import {POST_DATA} from '../../services';
 
 export default function Login({navigation}) {
+  const isDarkMode = useColorScheme() === 'dark';
   const auth = useSelector(state => state.auth);
+  const [hidden, setHidden] = useState(true);
   const dispatch = useDispatch();
 
   const onChangeInput = (value, type) => {
@@ -39,6 +43,7 @@ export default function Login({navigation}) {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
       <View style={styles.loginContainer}>
         <Image
           style={styles.imgLogo}
@@ -57,6 +62,8 @@ export default function Login({navigation}) {
           onChange={e => onChangeInput(e, 'password')}
           inputType="password"
           type="password"
+          hidden={hidden}
+          buttonHidden={() => setHidden(!hidden)}
           placeHolder="Masukkan Password"
         />
         <View style={styles.rowPassword}>

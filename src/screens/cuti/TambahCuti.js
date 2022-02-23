@@ -3,9 +3,9 @@ import {
   View,
   Text,
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   ScrollView,
+  StatusBar,
   useColorScheme,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
@@ -23,7 +23,7 @@ import {
 import DocumentPicker from 'react-native-document-picker';
 import {changeFormIzin, fetchRuleIzin} from '../../redux';
 import {getUserId} from '../../config';
-import { POST_DATA } from '../../services';
+import {POST_DATA} from '../../services';
 
 function TambahCuti({route, navigation}) {
   const isDarkMode = useColorScheme() === 'dark';
@@ -35,6 +35,8 @@ function TambahCuti({route, navigation}) {
   const [openAwal, setOpenAwal] = useState(false);
   const [openAkhir, setOpenAkhir] = useState(false);
   const [fileResponse, setFileResponse] = useState(null);
+
+  const auth = useSelector(state => state.auth);
 
   const handleDocumentSelection = useCallback(async () => {
     try {
@@ -83,7 +85,11 @@ function TambahCuti({route, navigation}) {
 
   const changeValueShift = e => {
     setTipeIzin(e);
+    var _FOUND = izin.ruleIzins.find(function (row, index) {
+      if (row.id == e) return true;
+    });
     dispatch(changeFormIzin('idRuleIzin', e));
+    dispatch(changeFormIzin('tipeWaktu', _FOUND.namaIzin));
   };
 
   const onChangeValueInput = (value, type) => {
@@ -112,6 +118,12 @@ function TambahCuti({route, navigation}) {
 
   useEffect(() => {
     getUserId().then(res => {
+      dispatch(getProfilData(res));
+    });
+  }, []);
+
+  useEffect(() => {
+    getUserId().then(res => {
       dispatch(changeFormIzin('pegawaiCode', res));
     });
   }, []);
@@ -120,7 +132,11 @@ function TambahCuti({route, navigation}) {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
       <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <HeaderWithBack goBack={() => goBack()} />
+        <HeaderWithBack
+          goBack={goBack}
+          title="Tambah Cuti"
+          imgProfil={auth.profil.foto_pegawai}
+        />
         <View style={styles.containerForm}>
           <InputLabel label="Nama" type="text" value={nama} editable={false} />
           <InputLabel label="NIK" type="text" value={nik} editable={false} />
@@ -155,17 +171,12 @@ function TambahCuti({route, navigation}) {
                 onValueChange={e => changeValueShift(e)}>
                 {izin.ruleIzins.map(row => (
                   <Picker.Item
-                    color="#fff"
+                    color={isDarkMode ? '#FFF' : '#000'}
                     label={row.namaIzin}
                     value={row.id}
                   />
                 ))}
               </Picker>
-              <Icon
-                name="caretdown"
-                color={'#A173C6'}
-                style={{marginLeft: -50}}
-              />
             </View>
           </View>
           <InputLabel

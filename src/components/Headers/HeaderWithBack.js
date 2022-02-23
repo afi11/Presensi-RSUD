@@ -1,17 +1,22 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import moment from 'moment';
+import { urlAssetImageProfil } from '../../config';
 
-function HeaderWithBack({goBack}) {
+function HeaderWithBack({goBack, title, imgProfil}) {
   return (
     <View style={styles.rowUserInfo}>
       <TouchableOpacity onPress={() => goBack()}>
         <Icon name="arrow-back" size={32} color={'#8F50DF'} />
       </TouchableOpacity>
-      <Text style={styles.tgl}>Rabu, 02 Febuari 2022</Text>
+      <Text style={styles.tgl}>
+        {' '}
+        {title != null ? title : moment().format('D MMMM YYYY')}
+      </Text>
       <Image
         style={styles.imgUser}
-        source={require('../../assets/images/jenny-sayang.jpg')}
+        source={{uri: urlAssetImageProfil + imgProfil}}
       />
     </View>
   );

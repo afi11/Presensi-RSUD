@@ -3,10 +3,12 @@ import {View, Text, Image, StyleSheet} from 'react-native';
 import moment from 'moment';
 import {urlAssetImageProfil} from '../../config';
 
-function HeaderNotBack({imgProfil}) {
+function HeaderNotBack({title, imgProfil}) {
   return (
     <View style={styles.rowUserInfo}>
-      <Text style={styles.tgl}>{moment().format('D MMMM YYYY')}</Text>
+      <Text style={styles.tgl}>
+        {title != null ? title : moment().format('D MMMM YYYY')}
+      </Text>
       <Image
         style={styles.imgUser}
         source={{uri: urlAssetImageProfil + imgProfil}}

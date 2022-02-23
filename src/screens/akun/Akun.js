@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,15 @@ import {
   AsyncStorage,
 } from 'react-native';
 import RNRestart from 'react-native-restart';
+import {useSelector, useDispatch} from 'react-redux';
 import {HeaderNotBack, MenuProfil, MenuProfilLogout} from '../../components';
+import {getUserId, urlAssetImageProfil} from '../../config';
+import {getProfilData} from '../../redux';
 
 export default function Akun({navigation}) {
+  const dispatch = useDispatch();
+  const auth = useSelector(state => state.auth);
+
   const gotoScreen = screen => {
     navigation.navigate(screen);
   };
@@ -30,6 +36,12 @@ export default function Akun({navigation}) {
     RNRestart.Restart;
   };
 
+  useEffect(() => {
+    getUserId().then(res => {
+      dispatch(getProfilData(res));
+    });
+  }, []);
+
   return (
     <ScrollView
       style={styles.scrollBg}
@@ -40,16 +52,23 @@ export default function Akun({navigation}) {
           <View style={styles.userInfo}>
             <Image
               style={styles.imgUser}
-              source={require('../../assets/images/jenny-sayang.jpg')}
+              source={{uri: urlAssetImageProfil + auth.profil.foto_pegawai}}
             />
-            <Text style={styles.userName}>User Pegawai 1</Text>
-            <Text style={styles.jabatan}>Staff IT</Text>
+            <Text style={styles.userName}>{auth.profil.nama}</Text>
+            <Text style={styles.jabatan}>{auth.profil.jabatan}</Text>
           </View>
           <Text style={styles.menuUtama}>Menu Utama</Text>
           <MenuProfil
             iconName="user"
             linkName="Edit Profil"
-            gotoScreen={() => gotoScreen('EditAkun')}
+            gotoScreen={() =>
+              navigation.navigate('EditAkun', {
+                nama: auth.profil.nama,
+                nik: auth.profil.nik,
+                email: auth.profil.email,
+                foto: auth.profil.foto_pegawai,
+              })
+            }
           />
           <MenuProfil iconName="gear" linkName="Pengaturan" gotoScreen={null} />
           <MenuProfil

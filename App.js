@@ -6,31 +6,41 @@ import {getToken, getUserId} from './src/config';
 import store from './src/redux/store';
 import {Provider} from 'react-redux';
 import axios from 'axios';
+import LoadingScreen from './LoadingScreen';
 
 LogBox.ignoreAllLogs();
 
 const App = () => {
   const [userId, setUserId] = useState(null);
   const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    getUserId().then(res => {
-      setUserId(res);
-    });
-  }, []);
+  const [page, setPage] = useState('');
 
   useEffect(() => {
     getToken().then(res => {
       setToken(res);
-      console.log(res);
-      axios.defaults.headers.common['Authorization'] = res;
+      getUserId().then(res2 => {
+        setUserId(res2);
+        axios.defaults.headers.common['Authorization'] = res;
+        if (res != null && res2 != null) {
+          setPage('Home');
+        } else {
+          setPage('Login');
+        }
+      });
     });
   }, []);
 
   return (
     <Provider store={store}>
       <NavigationContainer>
-        {token != null && userId != null ? <Router /> : <LoginPageStack />}
+        {/* {token != null && userId != null ? <Router /> : <LoginPageStack />} */}
+        {page == 'Home' ? (
+          <Router />
+        ) : page == 'Login' ? (
+          <LoginPageStack />
+        ) : (
+          <LoadingScreen />
+        )}
       </NavigationContainer>
     </Provider>
   );

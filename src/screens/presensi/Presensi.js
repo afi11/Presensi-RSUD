@@ -132,23 +132,9 @@ const bulanIni = () => {
   );
 };
 
-const aturTanggal = () => (
-  <View
-    style={{
-      width: '100%',
-      flexDirection: 'row',
-      marginTop: 10,
-      marginBottom: 16,
-    }}>
-    <CardNotLate />
-    <CardLate />
-  </View>
-);
-
 const renderScene = SceneMap({
   mingguIni: mingguIni,
   bulanIni: bulanIni,
-  aturTanggal: aturTanggal,
 });
 
 const renderTabBar = props => (
@@ -171,7 +157,6 @@ export default function Presensi() {
   const [routes] = React.useState([
     {key: 'mingguIni', title: 'Minggu Ini'},
     {key: 'bulanIni', title: 'Bulan Ini'},
-    {key: 'aturTanggal', title: 'Atur Tanggal'},
   ]);
 
   useEffect(() => {

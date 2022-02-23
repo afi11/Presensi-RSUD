@@ -79,3 +79,17 @@ export const fetchHistoryPresensiBulan = pegawaiCode => {
       });
   };
 };
+
+export const fetchHistorySemua = (pegawaiCode, tglAwal, tglAkhir) => {
+  return dispatch => {
+    GET_DATA(
+      `fetch-all-history-presensi?pegawaiCode=${pegawaiCode}&tglAwal=${tglAwal}&tglAkhir=${tglAkhir}`,
+    )
+      .then(response => {
+        dispatch(putHistoryPresensiFilter(response.data));
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+};
