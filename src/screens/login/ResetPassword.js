@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   },
   containerHeader: {
     marginHorizontal: 16,
-    marginVertical: 16,
+    marginTop: 32,
     flexDirection: 'row',
     alignItems: 'center',
   },

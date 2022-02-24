@@ -1,17 +1,18 @@
-import React, {useEffect} from 'react';
-import {View, StyleSheet, FlatList, Text} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {CardRiwayatIzin, HeaderNotBack} from '../../components';
-import {ButtonAjukanIzin} from '../../components/Buttons';
-import {getUserId} from '../../config';
-import {fetchIzinData, getProfilData} from '../../redux';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, FlatList, Text } from 'react-native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { CardRiwayatIzin, HeaderNotBack } from '../../components';
+import { ButtonAjukanIzin } from '../../components/Buttons';
+import { getUserId } from '../../config';
+import { fetchIzinData, getProfilData } from '../../redux';
 
 const Cuti = () => {
   const auth = useSelector(state => state.auth);
   const izin = useSelector(state => state.izin);
   const dispatch = useDispatch();
 
+  const isFocused = useIsFocused();
   const navigation = useNavigation();
   const gotoScreen = screen => {
     navigation.navigate(screen, {
@@ -32,7 +33,7 @@ const Cuti = () => {
     getUserId().then(res => {
       dispatch(fetchIzinData(res));
     });
-  }, []);
+  }, [isFocused]);
   return (
     <View style={styles.container}>
       <HeaderNotBack title="Izin" imgProfil={auth.profil.foto_pegawai} />
@@ -42,21 +43,26 @@ const Cuti = () => {
           text="Ajukan Izin"
         />
       </View>
-      <Text style={{color: '#3D3442', fontSize: 16, fontWeight: '500', marginVertical: 8}}>
-        Riwayat Presensi
+      <Text style={{ color: '#3D3442', fontSize: 16, fontWeight: '500', marginVertical: 10 }}>
+        Riwayat Cuti
       </Text>
-      <FlatList
-        data={izin.izins}
-        renderItem={({item}) => (
-          <CardRiwayatIzin
-            tanggalPresensi={item.tanggalMulaiIzin}
-            tanggalSelesai={item.tanggalAkhirIzin}
-            alasan={item.namaIzin}
-            status={item.statusIzin}
+      {
+        izin.izins.length > 0 ?
+          <FlatList
+            data={izin.izins}
+            renderItem={({ item }) => (
+              <CardRiwayatIzin
+                tanggalPresensi={item.tanggalMulaiIzin}
+                tanggalSelesai={item.tanggalAkhirIzin}
+                alasan={item.namaIzin}
+                status={item.statusIzin}
+              />
+            )}
+            keyExtractor={item => item.id}
           />
-        )}
-        keyExtractor={item => item.id}
-      />
+          :
+          <Text style={{ fontSize: 16, textAlign: 'center', color: '#A173C6' }}>Tidak Ada Riwayat Cuti</Text>}
+
     </View>
   );
 };

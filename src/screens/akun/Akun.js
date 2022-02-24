@@ -23,8 +23,7 @@ export default function Akun({navigation}) {
 
   const logout = async () => {
     try {
-      await AsyncStorage.removeItem('token');
-      await AsyncStorage.removeItem('userId');
+      await AsyncStorage.removeItem('user');
       RNRestart.Restart();
     } catch (error) {
       // Error retrieving data
@@ -130,7 +129,7 @@ const styles = StyleSheet.create({
   },
   menuUtama: {
     color: '#3D3442',
-    fontSize: 14,
+    fontSize: 18,
     marginTop: 18,
     marginBottom: 24,
     fontWeight: '600',

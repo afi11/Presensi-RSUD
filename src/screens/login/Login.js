@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,15 +10,15 @@ import {
   useColorScheme,
 } from 'react-native';
 import RNRestart from 'react-native-restart';
-import {useSelector, useDispatch} from 'react-redux';
-import {ButtonLogin, InputLogin, PasswordLogin} from '../../components';
-import {putFormAuth} from '../../redux';
-import {POST_DATA} from '../../services';
+import { useSelector, useDispatch } from 'react-redux';
+import { ButtonLoading, ButtonLogin, InputLogin, PasswordLogin } from '../../components';
+import { putFormAuth } from '../../redux';
+import { POST_DATA } from '../../services';
 
-export default function Login({navigation}) {
-  const isDarkMode = useColorScheme() === 'dark';
+export default function Login({ navigation }) {
   const auth = useSelector(state => state.auth);
   const [hidden, setHidden] = useState(true);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const onChangeInput = (value, type) => {
@@ -26,16 +26,33 @@ export default function Login({navigation}) {
   };
 
   const authLogin = () => {
-    console.log(auth.user);
+    setLoading(true);
     POST_DATA('/auth/login', auth.user)
       .then(res => {
-        console.log(res);
-        AsyncStorage.setItem('token', 'Bearer ' + res.access_token);
-        AsyncStorage.setItem('userId', res.user.pegawai_code);
+        setLoading(false)
+        AsyncStorage.setItem('user', JSON.stringify({
+          'token': 'Bearer ' + res.access_token,
+          'userId': res.user.pegawai_code
+        }));
         RNRestart.Restart();
       })
-      .catch(err => console.log(err));
+      .catch(err => alert(err));
   };
+
+  // _retrieveData = async () => {
+  //   try {
+  //     const value = await AsyncStorage.getItem('user');
+  //     if (value !== null) {
+  //       console.log(JSON.parse(value).userId);
+  //     }
+  //   } catch (error) {
+  //     // Error retrieving data
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   _retrieveData();
+  // }, []);
 
   const gotoScreen = screen => {
     navigation.navigate(screen);
@@ -71,7 +88,12 @@ export default function Login({navigation}) {
             <Text style={styles.textForgetPassword}>Lupa Kata Sandi?</Text>
           </TouchableOpacity>
         </View>
-        <ButtonLogin onPress={() => authLogin()} />
+        {loading ?
+          <ButtonLoading tulisan="Loading..." />
+          :
+          <ButtonLogin onPress={() => authLogin()} />
+        }
+
       </View>
     </View>
   );

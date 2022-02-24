@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,12 +8,12 @@ import {
   StatusBar,
   useColorScheme,
 } from 'react-native';
-import {Picker} from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
 import DatePicker from 'react-native-date-picker';
-import {useSelector, useDispatch} from 'react-redux';
-import Icon from 'react-native-vector-icons/AntDesign';
+import { useSelector, useDispatch } from 'react-redux';
 import RNFetchBlob from 'rn-fetch-blob';
 import {
+  ButtonLoading,
   ButtonSimpan,
   HeaderWithBack,
   InputDatePicker,
@@ -21,13 +21,13 @@ import {
   InputPickerFile,
 } from '../../components';
 import DocumentPicker from 'react-native-document-picker';
-import {changeFormIzin, fetchRuleIzin} from '../../redux';
-import {getUserId} from '../../config';
-import {POST_DATA} from '../../services';
+import { changeFormIzin, fetchRuleIzin } from '../../redux';
+import { getUserId } from '../../config';
+import { POST_DATA } from '../../services';
 
-function TambahCuti({route, navigation}) {
+function TambahCuti({ route, navigation }) {
   const isDarkMode = useColorScheme() === 'dark';
-  const {nama, jabatan, nik, namaDivisi} = route.params;
+  const { nama, jabatan, nik, namaDivisi } = route.params;
 
   const [tipeIzin, setTipeIzin] = useState(1);
   const [dateAwal, setDateAwal] = useState(new Date());
@@ -35,6 +35,8 @@ function TambahCuti({route, navigation}) {
   const [openAwal, setOpenAwal] = useState(false);
   const [openAkhir, setOpenAkhir] = useState(false);
   const [fileResponse, setFileResponse] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const auth = useSelector(state => state.auth);
 
@@ -49,7 +51,7 @@ function TambahCuti({route, navigation}) {
         .then(data => {
           dispatch(changeFormIzin('fileIzin', data));
         })
-        .catch(err => {});
+        .catch(err => { });
       setFileResponse(response);
       console.log(response);
     } catch (err) {
@@ -102,13 +104,17 @@ function TambahCuti({route, navigation}) {
   };
 
   const sendIzin = () => {
+    setLoading(true);
     POST_DATA('/send-izin', izin.ruleIzin)
       .then(response => {
+        setLoading(false);
         console.log(response);
         goBack();
       })
       .catch(err => {
-        console.log(err);
+        setLoading(false);
+        setError(err);
+        alert(err);
       });
   };
 
@@ -141,7 +147,7 @@ function TambahCuti({route, navigation}) {
           <InputLabel label="Nama" type="text" value={nama} editable={false} />
           <InputLabel label="NIK" type="text" value={nik} editable={false} />
           <View style={styles.row}>
-            <View style={{width: '50%', padding: 2}}>
+            <View style={{ width: '50%', padding: 2 }}>
               <InputLabel
                 label="Jabatan"
                 type="text"
@@ -149,7 +155,7 @@ function TambahCuti({route, navigation}) {
                 editable={false}
               />
             </View>
-            <View style={{width: '50%', padding: 2}}>
+            <View style={{ width: '50%', padding: 2 }}>
               <InputLabel
                 label="Ruangan"
                 type="text"
@@ -189,14 +195,14 @@ function TambahCuti({route, navigation}) {
             inputType="keteranganIzin"
           />
           <View style={styles.row}>
-            <View style={{width: '50%', padding: 2}}>
+            <View style={{ width: '50%', padding: 2 }}>
               <InputDatePicker
                 label="Tanggal Mulai"
                 onPress={openCloseDateAwal}
                 value={dateAwal.toDateString()}
               />
             </View>
-            <View style={{width: '50%', padding: 2}}>
+            <View style={{ width: '50%', padding: 2 }}>
               <InputDatePicker
                 label="Tanggal Akhir"
                 onPress={openCloseDateAkhir}
@@ -211,7 +217,12 @@ function TambahCuti({route, navigation}) {
               fileResponse != null ? fileResponse[0].name : 'Belum dipilih'
             }
           />
-          <ButtonSimpan onPress={() => sendIzin()} text="Ajukan" />
+          {loading ?
+            <ButtonLoading tulisan="Loading..." />
+            :
+            <ButtonSimpan onPress={() => sendIzin()} text="Ajukan" />
+          }
+
         </View>
       </ScrollView>
       <DatePicker
@@ -270,7 +281,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 8,
   },
-  column: {flexDirection: 'column', marginBottom: 16},
+  column: { flexDirection: 'column', marginBottom: 16 },
   row50: {
     flexDirection: 'row',
     alignItems: 'center',

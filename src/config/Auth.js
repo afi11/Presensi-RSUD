@@ -1,14 +1,13 @@
 import {AsyncStorage} from 'react-native';
 
-const token = 'token';
-const userId = 'userId';
+const user = 'user';
 
 export const getToken = () => {
   return new Promise((resolve, reject) => {
-    AsyncStorage.getItem(token)
+    AsyncStorage.getItem(user)
       .then(res => {
         if (res != null) {
-          resolve(res);
+          resolve(JSON.parse(res).token);
         } else {
           resolve(null);
         }
@@ -19,10 +18,10 @@ export const getToken = () => {
 
 export const getUserId = () => {
   return new Promise((resolve, reject) => {
-    AsyncStorage.getItem(userId)
+    AsyncStorage.getItem(user)
       .then(res => {
         if (res != null) {
-          resolve(res);
+          resolve(JSON.parse(res).userId);
         } else {
           resolve(null);
         }

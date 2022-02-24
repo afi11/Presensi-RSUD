@@ -7,7 +7,6 @@ import {
   StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import RNBottomActionSheet from 'react-native-bottom-action-sheet';
 import DocumentPicker from 'react-native-document-picker';
 import RNFetchBlob from 'rn-fetch-blob';
 import {ButtonSimpan, HeaderWithBack, InputLabel} from '../../components';
@@ -130,25 +129,6 @@ function EditAkun({route, navigation}) {
         />
         <ButtonSimpan text="Simpan" onPress={() => updateProfil()} />
       </View>
-      <RNBottomActionSheet.SheetView
-        visible={showBottom}
-        title={'Upload File Foto'}
-        theme={'light'}
-        onSelection={(index, value) => {
-          // value is optional
-          console.log('selection: ' + index + ' ' + value);
-        }}>
-        <RNBottomActionSheet.SheetView.Item
-          title={'Kamera'}
-          subTitle={'Kamera Handphone'}
-          icon={camera}
-        />
-        <RNBottomActionSheet.SheetView.Item
-          title={'Galery'}
-          subTitle={'Galery Handphone'}
-          icon={<Icon name="camera" size={24} color={'#A8A2B7'} />}
-        />
-      </RNBottomActionSheet.SheetView>
     </ScrollView>
   );
 }

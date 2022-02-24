@@ -1,7 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StatusBar,
+  ScrollView,
   Text,
   useColorScheme,
   FlatList,
@@ -13,12 +14,12 @@ import {
   HeaderWithBack,
   InputDatePicker2,
 } from '../../components';
-import {useDispatch, useSelector} from 'react-redux';
-import {fetchHistorySemua, getProfilData} from '../../redux';
-import {getUserId} from '../../config';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchHistorySemua, getProfilData } from '../../redux';
+import { getUserId } from '../../config';
 import DatePicker from 'react-native-date-picker';
 
-export default function AllPresensi({navigation}) {
+export default function AllPresensi({ navigation }) {
   const isDarkMode = useColorScheme() === 'dark';
   const [tglAwal, setTglAwal] = useState('');
   const [tglAkhir, setTglAkhir] = useState('');
@@ -91,10 +92,11 @@ export default function AllPresensi({navigation}) {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
-      <HeaderWithBack goBack={goBack} title="Riwayat Presensi" imgProfil={auth.profil.foto_pegawai} />
-      <View style={{marginBottom: 16, flexDirection: 'row'}}>
+    <ScrollView
+      style={styles.container}
+      contentInsetAdjustmentBehavior="automatic">
+      <HeaderWithBack goBack={() => goBack()} title="Riwayat Presensi" imgProfil={auth.profil.foto_pegawai} />
+      <View style={{ marginBottom: 16, flexDirection: 'row' }}>
         <ButtonRadio
           onPress={() => setButtonFilter('semua')}
           text="Tahun ini"
@@ -108,14 +110,14 @@ export default function AllPresensi({navigation}) {
       </View>
       {isFilter ? (
         <View style={styles.row}>
-          <View style={{width: '50%', padding: 2}}>
+          <View style={{ width: '50%', padding: 2 }}>
             <InputDatePicker2
               label="Tanggal Mulai"
               onPress={openCloseDateAwal}
               value={dateAwal.toDateString()}
             />
           </View>
-          <View style={{width: '50%', padding: 2}}>
+          <View style={{ width: '50%', padding: 2 }}>
             <InputDatePicker2
               label="Tanggal Akhir"
               onPress={openCloseDateAkhir}
@@ -136,18 +138,21 @@ export default function AllPresensi({navigation}) {
         }}>
         Riwayat Presensi
       </Text>
-      <FlatList
-        data={historyPresensi.historyPresensiFilter}
-        renderItem={({item}) => (
-          <CardRiwayatPresensi
-            tanggalPresensi={item.tanggalPresensi}
-            idRuleTelatMasuk={item.idRuleTelatMasuk}
-            jamMasuk={item.jamMasuk}
-            jamPulang={item.jamPulang}
-          />
-        )}
-        keyExtractor={item => item.id}
-      />
+      {historyPresensi.historyPresensiFilter.length > 0 ?
+        <FlatList
+          data={historyPresensi.historyPresensiFilter}
+          renderItem={({ item }) => (
+            <CardRiwayatPresensi
+              tanggalPresensi={item.tanggalPresensi}
+              idRuleTelatMasuk={item.idRuleTelatMasuk}
+              jamMasuk={item.jamMasuk}
+              jamPulang={item.jamPulang}
+            />
+          )}
+          keyExtractor={item => item.id}
+        />
+        :
+        <Text style={{ fontSize: 16, textAlign: 'center', color: '#A173C6' }}>Tidak Ada Riwayat Presensi</Text>}
       <DatePicker
         modal
         open={openAwal}
@@ -177,7 +182,7 @@ export default function AllPresensi({navigation}) {
           openCloseDateAkhir();
         }}
       />
-    </View>
+    </ScrollView>
   );
 }
 

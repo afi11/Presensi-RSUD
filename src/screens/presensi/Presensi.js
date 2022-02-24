@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   StyleSheet,
+  StatusBar,
+  RefreshControl,
+  useColorScheme,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
@@ -24,6 +27,7 @@ import {
 } from '../../redux';
 
 const mingguIni = () => {
+  const [refreshing, setRefreshing] = useState(true);
   const navigation = useNavigation();
   const gotoScreen = screen => {
     navigation.navigate(screen);
@@ -33,9 +37,17 @@ const mingguIni = () => {
 
   const dispatch = useDispatch();
 
+  const onRefresh = () => {
+    getUserId().then(res => {
+      dispatch(fetchHistoryPresensiMinggu(res));
+      setRefreshing(false);
+    });
+  };
+
   useEffect(() => {
     getUserId().then(res => {
       dispatch(fetchHistoryPresensiMinggu(res));
+      setRefreshing(false);
     });
   }, []);
 
@@ -67,18 +79,27 @@ const mingguIni = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      <FlatList
-        data={historyPresensi.historyPresensiMinggu}
-        renderItem={({item}) => (
-          <CardRiwayatPresensi
-            tanggalPresensi={item.tanggalPresensi}
-            idRuleTelatMasuk={item.idRuleTelatMasuk}
-            jamMasuk={item.jamMasuk}
-            jamPulang={item.jamPulang}
-          />
-        )}
-        keyExtractor={item => item.id}
-      />
+      {historyPresensi.historyPresensiMinggu.length > 0 ? (
+        <FlatList
+          data={historyPresensi.historyPresensiMinggu}
+          renderItem={({item}) => (
+            <CardRiwayatPresensi
+              tanggalPresensi={item.tanggalPresensi}
+              idRuleTelatMasuk={item.idRuleTelatMasuk}
+              jamMasuk={item.jamMasuk}
+              jamPulang={item.jamPulang}
+            />
+          )}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          keyExtractor={item => item.id}
+        />
+      ) : (
+        <Text style={{fontSize: 16, textAlign: 'center', color: '#A173C6'}}>
+          Tidak Ada Riwayat Presensi
+        </Text>
+      )}
     </>
   );
 };
@@ -116,6 +137,7 @@ const bulanIni = () => {
           Riwayat Presensi
         </Text>
       </View>
+
       <FlatList
         data={historyPresensi.historyPresensiBulan}
         renderItem={({item}) => (
@@ -149,7 +171,7 @@ const renderTabBar = props => (
 
 export default function Presensi() {
   const layout = useWindowDimensions();
-
+  const isDarkMode = useColorScheme() === 'dark';
   const auth = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
