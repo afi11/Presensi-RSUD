@@ -16,7 +16,7 @@ import MapView from 'react-native-maps';
 import {Marker} from 'react-native-maps';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Geolocation from '@react-native-community/geolocation';
-import {getDistance, getPreciseDistance} from 'geolib';
+import {getDistance} from 'geolib';
 import {ButtonLoading, ButtonPresensi} from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
 import {Snackbar} from 'react-native-paper';

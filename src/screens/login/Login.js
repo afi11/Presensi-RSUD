@@ -67,7 +67,7 @@ export default function Login({navigation}) {
           placeHolder="Masukkan Password"
         />
         <View style={styles.rowPassword}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => gotoScreen('ResetPassword')}>
             <Text style={styles.textForgetPassword}>Lupa Kata Sandi?</Text>
           </TouchableOpacity>
         </View>

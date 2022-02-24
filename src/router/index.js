@@ -13,6 +13,7 @@ import {
   Presensi,
   Cuti,
   TambahCuti,
+  ResetPassword,
 } from '../screens';
 
 const LoginStack = createNativeStackNavigator();
@@ -30,6 +31,7 @@ const LoginPageStack = () => {
         headerShown: false,
       }}>
       <LoginStack.Screen name="Login" component={Login} />
+      <LoginStack.Screen name="ResetPassword" component={ResetPassword} />
     </LoginStack.Navigator>
   );
 };

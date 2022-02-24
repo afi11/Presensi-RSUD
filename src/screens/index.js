@@ -6,5 +6,16 @@ import Akun from './akun/Akun';
 import EditAkun from './akun/EditAkun';
 import Cuti from './cuti/Cuti';
 import TambahCuti from './cuti/TambahCuti';
+import ResetPassword from './login/ResetPassword';
 
-export {Login, Home, Presensi, AllPresensi, Akun, EditAkun, Cuti, TambahCuti};
+export {
+  Login,
+  Home,
+  Presensi,
+  AllPresensi,
+  Akun,
+  EditAkun,
+  Cuti,
+  TambahCuti,
+  ResetPassword,
+};

@@ -1,2 +1,2 @@
-export const apiUrl = 'http://192.168.100.17/api';
-export const urlAssetImageProfil = 'http://192.168.100.17/assets/img/users/';
+export const apiUrl = 'http://192.168.100.22:2077/api';
+export const urlAssetImageProfil = 'http://192.168.100.22:2077/assets/img/users/';
