@@ -13,7 +13,9 @@ import {
   Presensi,
   Cuti,
   TambahCuti,
+  EditCuti,
   ResetPassword,
+  FileIzinView,
 } from '../screens';
 
 const LoginStack = createNativeStackNavigator();
@@ -87,6 +89,21 @@ const CutiPageStack = () => {
         }}
         name="TambahCuti"
         component={TambahCuti}
+      />
+      <CutiStack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="EditCuti"
+        component={EditCuti}
+      />
+      <CutiStack.Screen
+        options={{
+          headerShown: true,
+          title: "File Izin"
+        }}
+        name="FileIzinView"
+        component={FileIzinView}
       />
     </CutiStack.Navigator>
   );

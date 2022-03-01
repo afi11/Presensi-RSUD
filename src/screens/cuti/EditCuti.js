@@ -21,13 +21,25 @@ import {
   InputPickerFile,
 } from '../../components';
 import DocumentPicker from 'react-native-document-picker';
-import {changeFormIzin, fetchRuleIzin} from '../../redux';
+import {changeFormIzin, fetchRuleIzin2} from '../../redux';
 import {getTimeNow, getUserId} from '../../config';
-import {POST_DATA} from '../../services';
+import {UPDATE_DATA} from '../../services';
 
-function TambahCuti({route, navigation}) {
+function EditCuti({route, navigation}) {
   const isDarkMode = useColorScheme() === 'dark';
-  const {nama, jabatan, nik, namaDivisi} = route.params;
+  const {
+    nama,
+    jabatan,
+    nik,
+    namaDivisi,
+    activityCode,
+    idRuleIzin,
+    keteranganIzin,
+    tanggalMulaiIzin,
+    tanggalAkhirIzin,
+    tipeWaktu,
+    fileIzinPrevious,
+  } = route.params;
 
   const [tipeIzin, setTipeIzin] = useState(0);
   const [dateAwal, setDateAwal] = useState(new Date());
@@ -36,6 +48,7 @@ function TambahCuti({route, navigation}) {
   const [openAkhir, setOpenAkhir] = useState(false);
   const [fileResponse, setFileResponse] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [selectedIzin, setSelectedIzin] = useState(idRuleIzin);
   const [error, setError] = useState('');
 
   const auth = useSelector(state => state.auth);
@@ -91,6 +104,7 @@ function TambahCuti({route, navigation}) {
       if (row.id == e) return true;
     });
     dispatch(changeFormIzin('idRuleIzin', e));
+    setSelectedIzin(e);
     dispatch(changeFormIzin('tipeWaktu', _FOUND.namaIzin));
   };
 
@@ -106,7 +120,7 @@ function TambahCuti({route, navigation}) {
   const sendIzin = () => {
     dispatch(changeFormIzin('waktuPresensiUser', getTimeNow()));
     setLoading(true);
-    POST_DATA('/send-izin', izin.ruleIzin)
+    UPDATE_DATA('update-presensi', izin.ruleIzin.activityCode2, izin.ruleIzin)
       .then(response => {
         setLoading(false);
         console.log(response);
@@ -121,20 +135,13 @@ function TambahCuti({route, navigation}) {
   };
 
   useEffect(() => {
-    const tanggal = new Date();
-    var tgl =
-      tanggal.getFullYear() +
-      '-' +
-      (tanggal.getMonth() + 1) +
-      '-' +
-      tanggal.getDate();
-    dispatch(changeFormIzin('tanggalMulaiIzin', tgl));
-    dispatch(changeFormIzin('tanggalAkhirIzin', tgl));
+    setDateAwal(new Date(tanggalMulaiIzin));
+    setDateAkhir(new Date(tanggalAkhirIzin));
   }, []);
 
   useEffect(() => {
     getUserId().then(res => {
-      dispatch(fetchRuleIzin(res));
+      dispatch(fetchRuleIzin2(res));
     });
   }, []);
 
@@ -150,13 +157,25 @@ function TambahCuti({route, navigation}) {
     });
   }, []);
 
+  useEffect(() => {
+    dispatch(changeFormIzin('tanggalMulaiIzin', tanggalMulaiIzin));
+    dispatch(changeFormIzin('tanggalAkhirIzin', tanggalAkhirIzin));
+    dispatch(changeFormIzin('keteranganIzin', keteranganIzin));
+    dispatch(changeFormIzin('idRuleIzin', idRuleIzin));
+    dispatch(changeFormIzin('activityCode2', activityCode));
+    dispatch(changeFormIzin('tipeWaktu', tipeWaktu));
+    dispatch(changeFormIzin('fileIzinPrevious', fileIzinPrevious));
+    dispatch(changeFormIzin('fileIzin', ''));
+    dispatch(changeFormIzin('tipeFile', ''));
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <HeaderWithBack
           goBack={goBack}
-          title="Tambah Cuti"
+          title="Edit Cuti"
           imgProfil={auth.profil.foto_pegawai}
         />
         <View style={styles.containerForm}>
@@ -184,7 +203,7 @@ function TambahCuti({route, navigation}) {
             <Text style={styles.label}>Alasan Izin *</Text>
             <View style={styles.row50}>
               <Picker
-                selectedValue={tipeIzin}
+                selectedValue={selectedIzin}
                 mode="dialog"
                 style={{
                   color: '#000',
@@ -207,6 +226,7 @@ function TambahCuti({route, navigation}) {
             editable={true}
             multiLine={true}
             numberOfLine={2}
+            value={keteranganIzin}
             onChange={e => onChangeValueInput(e, 'keteranganIzin')}
             inputType="keteranganIzin"
           />
@@ -236,7 +256,7 @@ function TambahCuti({route, navigation}) {
           {loading ? (
             <ButtonLoading tulisan="Loading..." />
           ) : (
-            <ButtonSimpan onPress={() => sendIzin()} text="Ajukan" />
+            <ButtonSimpan onPress={() => sendIzin()} text="Update" />
           )}
         </View>
       </ScrollView>
@@ -245,7 +265,6 @@ function TambahCuti({route, navigation}) {
         open={openAwal}
         date={dateAwal}
         mode="date"
-        title="Tanggal Mulai"
         textColor={isDarkMode ? '#FFF' : '#000'}
         onConfirm={date => {
           putTanggalToForm('tanggalMulaiIzin', date);
@@ -261,7 +280,6 @@ function TambahCuti({route, navigation}) {
         date={dateAkhir}
         minimumDate={dateAwal}
         mode="date"
-        title="Tanggal Selesai"
         textColor={isDarkMode ? '#FFF' : '#000'}
         onConfirm={date => {
           putTanggalToForm('tanggalAkhirIzin', date);
@@ -311,4 +329,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TambahCuti;
+export default EditCuti;

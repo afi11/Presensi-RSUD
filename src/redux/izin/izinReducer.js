@@ -11,7 +11,11 @@ const initialState = {
     tanggalAkhirIzin: null,
     tipeWaktu: null,
     fileIzin: null,
+    fileIzinPrevious: null,
     tipefile: null,
+    waktuPresensiUser: null,
+    activityCode: null,
+    activityCode2: null,
   },
 };
 

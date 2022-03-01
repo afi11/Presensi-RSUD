@@ -24,11 +24,23 @@ export const changeFormIzin = (inputType, inputValue) => {
   };
 };
 
-export const fetchRuleIzin = () => {
+export const fetchRuleIzin = pegawaiCode => {
   return dispatch => {
-    GET_DATA('fetch-rule-izin')
+    GET_DATA(`fetch-rule-izin?pegawaiCode=${pegawaiCode}`)
       .then(response => {
         dispatch(putRuleIzin(response.data));
+        dispatch(changeFormIzin('activityCode', response.activityCode));
+      })
+      .catch(err => console.log(err));
+  };
+};
+
+export const fetchRuleIzin2 = pegawaiCode => {
+  return dispatch => {
+    GET_DATA(`fetch-rule-izin-edit-cuti?pegawaiCode=${pegawaiCode}`)
+      .then(response => {
+        dispatch(putRuleIzin(response.data));
+        dispatch(changeFormIzin('activityCode', response.activityCode));
       })
       .catch(err => console.log(err));
   };

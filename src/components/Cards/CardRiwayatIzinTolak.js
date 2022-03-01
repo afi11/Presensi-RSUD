@@ -2,24 +2,17 @@ import React from 'react';
 import moment from 'moment';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
-const CardRiwayatIzin = ({
-  onPress,
-  tanggalPengajuan,
-  tanggalPresensi,
-  tanggalSelesai,
-  alasan,
-  status,
-}) => {
+const CardRiwayatIzinTolak = ({tanggalPresensi, tanggalSelesai, alasan, status}) => {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity>
       <View style={styles.container}>
         <View style={styles.subContainer}>
           <View style={styles.subDate}>
             <Text style={styles.textTgl}>
-              {moment(tanggalPengajuan).format('MMM')}
+              {moment(tanggalPresensi).format('MMM')}
             </Text>
             <Text style={styles.textBulan}>
-              {moment(tanggalPengajuan).format('D')}
+              {moment(tanggalPresensi).format('D')}
             </Text>
           </View>
           <View style={styles.rowDetIzin}>
@@ -81,7 +74,7 @@ const styles = StyleSheet.create({
   subContainer: {
     width: '100%',
     flexDirection: 'row',
-    borderLeftColor: '#69D767',
+    borderLeftColor: '#E85F5F',
     borderLeftWidth: 8,
     padding: 10,
     borderRadius: 10,
@@ -120,4 +113,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CardRiwayatIzin;
+export default CardRiwayatIzinTolak;

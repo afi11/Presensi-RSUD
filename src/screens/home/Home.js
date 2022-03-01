@@ -98,8 +98,6 @@ export default function Home() {
         );
       }
     }
-
-    console.log(_FOUND);
   };
 
   const onOpneScanner = () => {
@@ -473,9 +471,7 @@ export default function Home() {
                   <View style={styles.selectJadwal}>
                     {presensi.presensi != null ? (
                       <Picker
-                        enabled={
-                          presensi.activityCodePresensi != null ? false : true
-                        }
+                        enabled={true}
                         selectedValue={presensi.storePresensi.idWaktu}
                         mode="dialog"
                         style={{

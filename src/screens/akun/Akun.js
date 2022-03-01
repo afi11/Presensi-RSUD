@@ -69,12 +69,12 @@ export default function Akun({navigation}) {
               })
             }
           />
-          <MenuProfil iconName="gear" linkName="Pengaturan" gotoScreen={null} />
+          {/* <MenuProfil iconName="gear" linkName="Pengaturan" gotoScreen={null} />
           <MenuProfil
             iconName="info-circle"
             linkName="Tentang Aplikasi"
             gotoScreen={null}
-          />
+          /> */}
           <MenuProfilLogout
             iconName="sign-out"
             linkName="Keluar"

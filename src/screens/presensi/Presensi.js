@@ -85,7 +85,7 @@ const mingguIni = () => {
           renderItem={({item}) => (
             <CardRiwayatPresensi
               tanggalPresensi={item.tanggalPresensi}
-              idRuleTelatMasuk={item.idRuleTelatMasuk}
+              telat={item.idRuleTelatMasuk != null || item.idRuleTelatPulang != null ? true : false}
               jamMasuk={item.jamMasuk}
               jamPulang={item.jamPulang}
             />
@@ -143,7 +143,7 @@ const bulanIni = () => {
         renderItem={({item}) => (
           <CardRiwayatPresensi
             tanggalPresensi={item.tanggalPresensi}
-            idRuleTelatMasuk={item.idRuleTelatMasuk}
+            telat={item.idRuleTelatMasuk != null || item.idRuleTelatPulang != null ? true : false}
             jamMasuk={item.jamMasuk}
             jamPulang={item.jamPulang}
           />

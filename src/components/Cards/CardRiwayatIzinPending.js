@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
-const CardRiwayatIzin = ({
+const CardRiwayatIzinPending = ({
   onPress,
   tanggalPengajuan,
   tanggalPresensi,
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   subContainer: {
     width: '100%',
     flexDirection: 'row',
-    borderLeftColor: '#69D767',
+    borderLeftColor: '#E4E680',
     borderLeftWidth: 8,
     padding: 10,
     borderRadius: 10,
@@ -120,4 +120,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CardRiwayatIzin;
+export default CardRiwayatIzinPending;

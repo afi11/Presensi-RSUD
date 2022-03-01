@@ -9,7 +9,7 @@ export const UPDATE_DATA = (params, id, data) => {
         resolve(response.data);
       })
       .catch(err => {
-        reject(err);
+        reject(err.response);
       });
   });
 };
