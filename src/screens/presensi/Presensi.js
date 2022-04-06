@@ -10,7 +10,7 @@ import {
   RefreshControl,
   useColorScheme,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useIsFocused} from '@react-navigation/native';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import {
   CardLate,
@@ -29,6 +29,7 @@ import {
 const mingguIni = () => {
   const [refreshing, setRefreshing] = useState(true);
   const navigation = useNavigation();
+  const focused = useIsFocused();
   const gotoScreen = screen => {
     navigation.navigate(screen);
   };
@@ -49,7 +50,7 @@ const mingguIni = () => {
       dispatch(fetchHistoryPresensiMinggu(res));
       setRefreshing(false);
     });
-  }, []);
+  }, [focused]);
 
   return (
     <>
@@ -85,14 +86,23 @@ const mingguIni = () => {
           renderItem={({item}) => (
             <CardRiwayatPresensi
               tanggalPresensi={item.tanggalPresensi}
-              telat={item.idRuleTelatMasuk != null || item.idRuleTelatPulang != null ? true : false}
-              jamMasuk={item.jamMasuk}
-              jamPulang={item.jamPulang}
+              telat={
+                item.idRuleTelatMasuk != null || item.idRuleLewatPulang != null
+                  ? true
+                  : false
+              }
+              jamMasuk={
+                item.jamMasuk +
+                ' - ' +
+                (item.telatMasuk != null ? item.telatMasuk : 'Tepat')
+              }
+              jamPulang={
+                item.jamPulang +
+                ' - ' +
+                (item.telatPulang != null ? item.telatPulang : 'Tepat')
+              }
             />
           )}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
           keyExtractor={item => item.id}
         />
       ) : (
@@ -143,9 +153,21 @@ const bulanIni = () => {
         renderItem={({item}) => (
           <CardRiwayatPresensi
             tanggalPresensi={item.tanggalPresensi}
-            telat={item.idRuleTelatMasuk != null || item.idRuleTelatPulang != null ? true : false}
-            jamMasuk={item.jamMasuk}
-            jamPulang={item.jamPulang}
+            telat={
+              item.idRuleTelatMasuk != null || item.idRuleLewatPulang != null
+                ? true
+                : false
+            }
+            jamMasuk={
+              item.jamMasuk +
+              ' - ' +
+              (item.telatMasuk != null ? item.telatMasuk : 'Tepat')
+            }
+            jamPulang={
+              item.jamPulang +
+              ' - ' +
+              (item.telatPulang != null ? item.telatPulang : 'Tepat')
+            }
           />
         )}
         keyExtractor={item => item.id}

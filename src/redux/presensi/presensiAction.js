@@ -170,7 +170,7 @@ export const fetchDataPresensi = (pegawaiCode, currentData, activityCode) => {
           waktuKerja = response.data.jam_akhir_masuk;
           waktuMulaiPresensi = response.data.jam_mulai_masuk;
         } else {
-          waktuKerja = response.data.jam_akhir_pulang;
+          waktuKerja = response.data.jam_awal_pulang;
           waktuMulaiPresensi = response.data.jam_awal_pulang;
         }
 

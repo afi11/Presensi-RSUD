@@ -140,6 +140,14 @@ const Cuti = () => {
                 alasan={item.namaIzin}
                 status={item.statusIzin}
               />
+            ) : item.statusIzin == 2 ? (
+              <CardRiwayatIzinTolak
+                tanggalPengajuan={item.created_at}
+                tanggalPresensi={item.tanggalMulaiIzin}
+                tanggalSelesai={item.tanggalAkhirIzin}
+                alasan={item.namaIzin}
+                status={item.statusIzin}
+              />
             ) : (
               <CardRiwayatIzinTolak
                 tanggalPengajuan={item.created_at}

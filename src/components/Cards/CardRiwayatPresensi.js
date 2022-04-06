@@ -10,18 +10,22 @@ const CardRiwayatPresensi = ({tanggalPresensi, telat, jamMasuk, jamPulang}) => {
           <Text style={styles.textTgl}>
             {moment(tanggalPresensi).format('D MMMM YYYY')}
           </Text>
-          {telat ? (
-            <View style={styles.rowNotLate}>
-              <Text style={styles.textRowNotLate}>Tepat Waktu</Text>
-            </View>
+          {jamMasuk != null && jamPulang != null ? (
+            telat ? (
+              <View style={styles.rowLate}>
+                <Text style={styles.textRowLate}>Telat</Text>
+              </View>
+            ) : (
+              <View style={styles.rowNotLate}>
+                <Text style={styles.textRowNotLate}>Tepat Waktu</Text>
+              </View>
+            )
           ) : (
-            <View style={styles.rowLate}>
-              <Text style={styles.textRowLate}>Telat</Text>
-            </View>
+            <></>
           )}
         </View>
         <View style={styles.rowDetPresensi}>
-          <Text style={styles.textDetPresensi}>Masuk : {jamMasuk} | </Text>
+          <Text style={styles.textDetPresensi}>Masuk : {jamMasuk}</Text>
           <Text style={styles.textDetPresensi}>Keluar : {jamPulang}</Text>
         </View>
       </View>
@@ -71,7 +75,7 @@ const styles = StyleSheet.create({
   },
   rowDetPresensi: {
     width: '100%',
-    flexDirection: 'row',
+    flexDirection: 'column',
     marginTop: 6,
   },
   textDetPresensi: {

@@ -106,18 +106,26 @@ function TambahCuti({route, navigation}) {
   const sendIzin = () => {
     dispatch(changeFormIzin('waktuPresensiUser', getTimeNow()));
     setLoading(true);
-    POST_DATA('/send-izin', izin.ruleIzin)
-      .then(response => {
-        setLoading(false);
-        console.log(response);
-        goBack();
-      })
-      .catch(err => {
-        setLoading(false);
-        setError(err);
-        alert(err);
-        console.log(err);
-      });
+    if (tipeIzin == 0) {
+      alert('Alasan Izin Harus Dipilih Dahulu');
+      setLoading(false);
+    } else if (fileResponse == null) {
+      alert('Dokumen Izin Belum Dipilih');
+      setLoading(false);
+    } else {
+      POST_DATA('/send-izin', izin.ruleIzin)
+        .then(response => {
+          setLoading(false);
+          console.log(response);
+          goBack();
+        })
+        .catch(err => {
+          setLoading(false);
+          setError(err);
+          alert(err);
+          console.log(err);
+        });
+    }
   };
 
   useEffect(() => {

@@ -149,12 +149,20 @@ export default function AllPresensi({navigation}) {
             <CardRiwayatPresensi
               tanggalPresensi={item.tanggalPresensi}
               telat={
-                item.idRuleTelatMasuk != null || item.idRuleTelatPulang != null
+                item.idRuleTelatMasuk != null || item.idRuleLewatPulang != null
                   ? true
                   : false
               }
-              jamMasuk={item.jamMasuk}
-              jamPulang={item.jamPulang}
+              jamMasuk={
+                item.jamMasuk +
+                ' - ' +
+                (item.telatMasuk != null ? item.telatMasuk : 'Tepat')
+              }
+              jamPulang={
+                item.jamPulang +
+                ' - ' +
+                (item.telatPulang != null ? item.telatPulang : 'Tepat')
+              }
             />
           )}
           keyExtractor={item => item.id}

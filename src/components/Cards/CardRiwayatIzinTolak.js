@@ -2,7 +2,12 @@ import React from 'react';
 import moment from 'moment';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
-const CardRiwayatIzinTolak = ({tanggalPresensi, tanggalSelesai, alasan, status}) => {
+const CardRiwayatIzinTolak = ({
+  tanggalPresensi,
+  tanggalSelesai,
+  alasan,
+  status,
+}) => {
   return (
     <TouchableOpacity>
       <View style={styles.container}>
@@ -33,7 +38,9 @@ const CardRiwayatIzinTolak = ({tanggalPresensi, tanggalSelesai, alasan, status})
                   ? 'Disetujui'
                   : status == 0
                   ? 'Menunggu Persetujuan'
-                  : 'Ditolak'}
+                  : status == 2
+                  ? 'Ditolak'
+                  : 'Dibatalkan'}
               </Text>
             </View>
             <View style={styles.rowIsiIzin}>

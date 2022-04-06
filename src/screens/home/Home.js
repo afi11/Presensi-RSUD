@@ -9,6 +9,8 @@ import {
   Platform,
   StatusBar,
   useColorScheme,
+  ScrollView,
+  RefreshControl,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {CameraScreen} from 'react-native-camera-kit';
@@ -35,6 +37,7 @@ export default function Home() {
   const isDarkMode = useColorScheme() === 'dark';
   const [qrvalue, setQrvalue] = useState('');
   const [opneScanner, setOpneScanner] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [currentLongitude, setCurrentLongitude] = useState('...');
   const [currentLatitude, setCurrentLatitude] = useState('...');
@@ -53,6 +56,24 @@ export default function Home() {
 
   const presensi = useSelector(state => state.presensi);
   const dispatch = useDispatch();
+
+  const wait = timeout => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(5000).then(() => {
+      getOneTimeLocation();
+      subscribeLocationLocation();
+      getUserId().then(res => {
+        dispatch(
+          fetchDataPresensi(res, genDateNow(), presensi.activityCodePresensi),
+        );
+      });
+      setRefreshing(false);
+    });
+  }, []);
 
   const onBarcodeScan = result => {
     setQrvalue(result);
@@ -253,22 +274,54 @@ export default function Home() {
   };
 
   const startPresensi = () => {
-    setLoading(true);
-    POST_DATA('/send-presensi', presensi.storePresensi)
-      .then(() => {
-        setLoading(false);
-        getUserId().then(res => {
-          console.log(res);
-          dispatch(
-            fetchDataPresensi(res, genDateNow(), presensi.activityCodePresensi),
-          );
-          onShowSnackBarSuccess();
+    if (presensi.storePresensi.tipeWaktu != 'shift') {
+      setLoading(true);
+      POST_DATA('/send-presensi', presensi.storePresensi)
+        .then(() => {
+          setLoading(false);
+          getUserId().then(res => {
+            console.log(res);
+            dispatch(
+              fetchDataPresensi(
+                res,
+                genDateNow(),
+                presensi.activityCodePresensi,
+              ),
+            );
+            onShowSnackBarSuccess();
+          });
+        })
+        .catch(err => {
+          setError(err);
+          onShowSnackBarFailed();
         });
-      })
-      .catch(err => {
-        setError(err);
-        onShowSnackBarFailed();
-      });
+    } else {
+      if (presensi.storePresensi.tipeWaktu == 'shift') {
+        if (presensi.storePresensi.idWaktu != null) {
+          POST_DATA('/send-presensi', presensi.storePresensi)
+            .then(() => {
+              setLoading(false);
+              getUserId().then(res => {
+                console.log(res);
+                dispatch(
+                  fetchDataPresensi(
+                    res,
+                    genDateNow(),
+                    presensi.activityCodePresensi,
+                  ),
+                );
+                onShowSnackBarSuccess();
+              });
+            })
+            .catch(err => {
+              setError(err);
+              onShowSnackBarFailed();
+            });
+        } else {
+          alert('Jadwal Shift Harus Dipilih');
+        }
+      }
+    }
   };
 
   return (
@@ -345,8 +398,20 @@ export default function Home() {
               }
             />
           </MapView>
-          <View style={styles.presensiInfo}>
-            <View style={styles.containerPresensi}>
+          <ScrollView
+            style={styles.presensiInfo}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
+            <View
+              style={
+                presensi.storePresensi.tipeWaktu != 'shift'
+                  ? styles.containerPresensi
+                  : styles.containerPresensiShift
+              }>
+              <Text style={{color: '#000', fontSize: 12, textAlign: 'center'}}>
+                Tarik ke bawah untuk refresh lokasi
+              </Text>
               <Text style={styles.header}>Lokasi</Text>
               <Text style={styles.header2}>
                 Jl. Kapten Tendean No.16, Pakunden, Kec. Pesantren, Kota Kediri
@@ -428,7 +493,7 @@ export default function Home() {
                 </View>
               )}
               <View style={styles.marginBottom}></View>
-              <View>
+              {/* <View>
                 <Text style={styles.header}>Hasil Presensi</Text>
                 <View style={styles.row}>
                   <View style={styles.column}>
@@ -458,7 +523,7 @@ export default function Home() {
                     </Text>
                   </View>
                 </View>
-              </View>
+              </View> */}
 
               {presensi.storePresensi.tipeWaktu == 'shift' ? (
                 <View
@@ -542,7 +607,7 @@ export default function Home() {
                 <Text style={{color: '#fff', fontSize: 18}}>{error}</Text>
               </Snackbar>
             </View>
-          </View>
+          </ScrollView>
         </View>
       )}
     </SafeAreaView>
@@ -570,12 +635,24 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 18,
     marginBottom: 16,
+    bottom: 0,
+    position: 'absolute',
   },
   containerPresensi: {
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 10,
-    height: 350,
+    height: 280,
+    display: 'flex',
+    flexDirection: 'column',
+    padding: 16,
+    elevation: 4,
+  },
+  containerPresensiShift: {
+    width: '100%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    height: 400,
     display: 'flex',
     flexDirection: 'column',
     padding: 16,
