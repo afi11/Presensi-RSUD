@@ -28,6 +28,7 @@ import {
   putShiftId,
   putWaktuPresensiShift,
   putWaktuPresensiUser,
+  setQRCode,
   setTimePresensiShift,
 } from '../../redux';
 import {genDateNow, getTimeNow, getUserId} from '../../config';
@@ -79,12 +80,14 @@ export default function Home() {
     setQrvalue(result);
     setOpneScanner(false);
     if (parseInt(presensi.storePresensi.jarakPresensi) <= 80) {
-      if (result == 'seEfxclnPIieWtoF9rjrR2d7jb2Af0ALDnCRCe+PyLY=') {
-        startPresensi();
-      } else {
-        setError('QR Code tidak dikenali');
-        onShowSnackBarFailed();
-      }
+      dispatch(setQRCode(result));
+      startPresensi(result);
+      // if (result == 'seEfxclnPIieWtoF9rjrR2d7jb2Af0ALDnCRCe+PyLY=') {
+      //   startPresensi();
+      // } else {
+      //   setError('QR Code tidak dikenali');
+      //   onShowSnackBarFailed();
+      // }
     } else {
       setError('Silahkan absen pada area RSUD GAMBIRAN ');
       onShowSnackBarFailed();
@@ -273,48 +276,64 @@ export default function Home() {
     );
   };
 
-  const startPresensi = () => {
+  const startPresensi = (qr) => {
+    console.log(qr);
+    console.log(presensi.storePresensi);
     if (presensi.storePresensi.tipeWaktu != 'shift') {
       setLoading(true);
-      POST_DATA('/send-presensi', presensi.storePresensi)
-        .then(() => {
+      POST_DATA(`/send-presensi-v2/${qr}`, presensi.storePresensi)
+        .then((res) => {
           setLoading(false);
-          getUserId().then(res => {
-            console.log(res);
-            dispatch(
-              fetchDataPresensi(
-                res,
-                genDateNow(),
-                presensi.activityCodePresensi,
-              ),
-            );
-            onShowSnackBarSuccess();
-          });
+          console.log(res);
+          if(res.code == 200){
+            getUserId().then(res => {
+              console.log(res);
+              dispatch(
+                fetchDataPresensi(
+                  res,
+                  genDateNow(),
+                  presensi.activityCodePresensi,
+                ),
+              );
+              onShowSnackBarSuccess();
+            });
+         }else{
+            setError('QR Code tidak dikenali');
+            onShowSnackBarFailed();
+         }
         })
         .catch(err => {
-          setError(err);
+          console.log(err);
+          //setError(err);
           onShowSnackBarFailed();
         });
     } else {
       if (presensi.storePresensi.tipeWaktu == 'shift') {
         if (presensi.storePresensi.idWaktu != null) {
-          POST_DATA('/send-presensi', presensi.storePresensi)
-            .then(() => {
+          POST_DATA(`/send-presensi-v2/${qr}`, presensi.storePresensi)
+            .then((res) => {
               setLoading(false);
-              getUserId().then(res => {
-                console.log(res);
-                dispatch(
-                  fetchDataPresensi(
-                    res,
-                    genDateNow(),
-                    presensi.activityCodePresensi,
-                  ),
-                );
-                onShowSnackBarSuccess();
-              });
+              console.log(res);
+              if(res.code == 200){
+                getUserId().then(res => {
+                  console.log(res);
+                  dispatch(
+                    fetchDataPresensi(
+                      res,
+                      genDateNow(),
+                      presensi.activityCodePresensi,
+                    ),
+                  );
+                  onShowSnackBarSuccess();
+                });
+              }else{
+               setError('QR Code tidak dikenali');
+               onShowSnackBarFailed();
+              }
             })
             .catch(err => {
-              setError(err);
+              console.log(err);
+              //setError(err);
               onShowSnackBarFailed();
             });
         } else {
@@ -652,7 +671,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 10,
-    height: 400,
+    height: 330,
     display: 'flex',
     flexDirection: 'column',
     padding: 16,

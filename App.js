@@ -17,6 +17,7 @@ const App = () => {
 
   useEffect(() => {
     getToken().then(res => {
+      console.log(res);
       setToken(res);
       getUserId().then(res2 => {
         setUserId(res2);

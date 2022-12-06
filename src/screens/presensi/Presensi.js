@@ -94,12 +94,12 @@ const mingguIni = () => {
               jamMasuk={
                 item.jamMasuk +
                 ' - ' +
-                (item.telatMasuk != null ? item.telatMasuk : 'Tepat')
+                (item.telatMasuk != null ? item.telatMasuk : 'Tepat') + (item.tempat1 != null ? ' - '+item.tempat1 : "")
               }
               jamPulang={
                 item.jamPulang +
                 ' - ' +
-                (item.telatPulang != null ? item.telatPulang : 'Tepat')
+                (item.telatPulang != null ? item.telatPulang : 'Tepat') + (item.tempat2 != null ? ' - '+item.tempat2 : "")
               }
             />
           )}
@@ -161,12 +161,12 @@ const bulanIni = () => {
             jamMasuk={
               item.jamMasuk +
               ' - ' +
-              (item.telatMasuk != null ? item.telatMasuk : 'Tepat')
+              (item.telatMasuk != null ? item.telatMasuk : 'Tepat') + (item.tempat1 != null ? ' - '+item.tempat1 : "")
             }
             jamPulang={
               item.jamPulang +
               ' - ' +
-              (item.telatPulang != null ? item.telatPulang : 'Tepat')
+              (item.telatPulang != null ? item.telatPulang : 'Tepat') + (item.tempat2 != null ? ' - '+item.tempat2 : "")
             }
           />
         )}

@@ -13,6 +13,7 @@ import {
   FETCH_TIPE_PEGAWAI_PRESENSI_SHIFT,
   FETCH_WAKTU_PRESENSI_SHIFT,
   FETCH_WAKTU_PRESENSI_USER,
+  SET_CODE_QR,
   SET_ENABLE_PRESENSI,
   SET_TIME_PRESENSI_SHIFT,
 } from './presensiTypes';
@@ -142,6 +143,13 @@ export const setTimePresensiShift = row => {
     jam_akhir_masuk: row.jam_akhir_masuk,
     jam_awal_pulang: row.jam_awal_pulang,
     jam_akhir_pulang: row.jam_akhir_pulang,
+  };
+};
+
+export const setQRCode = code => {
+  return {
+    type: SET_CODE_QR,
+    code: code,
   };
 };
 

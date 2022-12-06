@@ -10,6 +10,7 @@ import {
   FETCH_TIPE_PEGAWAI_PRESENSI_SHIFT,
   FETCH_WAKTU_PRESENSI_SHIFT,
   FETCH_WAKTU_PRESENSI_USER,
+  SET_CODE_QR,
   SET_ENABLE_PRESENSI,
   SET_TIME_PRESENSI_SHIFT,
 } from './presensiTypes';
@@ -30,6 +31,7 @@ const initialState = {
     jam_akhir_pulang: null,
   },
   storePresensi: {
+    code: null,
     tipeWaktu: null,
     tipePresensi: null,
     waktuPresensiUser: null,
@@ -120,6 +122,14 @@ const presensiReducer = (state = initialState, action) => {
           waktuKerja: action.waktuKerja,
         },
       };
+    case SET_CODE_QR:
+      return {
+        ...state,
+        storePresensi: {
+          ...state.storePresensi,
+          code: action.code
+        }
+      }
     case FETCH_ID_WAKTU_SHIFT:
       return {
         ...state,

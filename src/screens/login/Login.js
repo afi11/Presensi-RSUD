@@ -94,11 +94,11 @@ export default function Login({navigation}) {
           buttonHidden={() => setHidden(!hidden)}
           placeHolder="Masukkan Password"
         />
-        <View style={styles.rowPassword}>
+        {/* <View style={styles.rowPassword}>
           <TouchableOpacity onPress={() => gotoScreen('ResetPassword')}>
             <Text style={styles.textForgetPassword}>Lupa Kata Sandi?</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
         {loading ? (
           <ButtonLoading tulisan="Loading..." />
         ) : (
