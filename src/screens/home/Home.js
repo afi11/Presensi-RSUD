@@ -46,6 +46,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [visibleSuccess, setVisibleSuccess] = useState(false);
   const [visibleFailed, setVisibleFailed] = useState(false);
 
@@ -276,18 +277,19 @@ export default function Home() {
     );
   };
 
-  const startPresensi = (qr) => {
-    console.log(qr);
-    console.log(presensi.storePresensi);
+  const startPresensi = qr => {
+    // console.log(qr);
+    // console.log(presensi.storePresensi);
     if (presensi.storePresensi.tipeWaktu != 'shift') {
       setLoading(true);
       POST_DATA(`/send-presensi-v2/${qr}`, presensi.storePresensi)
-        .then((res) => {
+        .then(res => {
           setLoading(false);
-          console.log(res);
-          if(res.code == 200){
+          //console.log(res);
+          setSuccess(res.message);
+          if (res.code == 200) {
             getUserId().then(res => {
-              console.log(res);
+              //console.log(res);
               dispatch(
                 fetchDataPresensi(
                   res,
@@ -297,13 +299,13 @@ export default function Home() {
               );
               onShowSnackBarSuccess();
             });
-         }else{
+          } else {
             setError('QR Code tidak dikenali');
             onShowSnackBarFailed();
-         }
+          }
         })
         .catch(err => {
-          console.log(err);
+          //console.log(err);
           //setError(err);
           onShowSnackBarFailed();
         });
@@ -311,10 +313,11 @@ export default function Home() {
       if (presensi.storePresensi.tipeWaktu == 'shift') {
         if (presensi.storePresensi.idWaktu != null) {
           POST_DATA(`/send-presensi-v2/${qr}`, presensi.storePresensi)
-            .then((res) => {
+            .then(res => {
               setLoading(false);
               console.log(res);
-              if(res.code == 200){
+              setSuccess(res.message);
+              if (res.code == 200) {
                 getUserId().then(res => {
                   console.log(res);
                   dispatch(
@@ -326,9 +329,9 @@ export default function Home() {
                   );
                   onShowSnackBarSuccess();
                 });
-              }else{
-               setError('QR Code tidak dikenali');
-               onShowSnackBarFailed();
+              } else {
+                setError('QR Code tidak dikenali');
+                onShowSnackBarFailed();
               }
             })
             .catch(err => {
@@ -435,11 +438,15 @@ export default function Home() {
               <Text style={styles.header2}>
                 Jl. Kapten Tendean No.16, Pakunden, Kec. Pesantren, Kota Kediri
               </Text>
+              <View style={styles.row}>
+                <Text style={styles.header}>Tanggal</Text>
+                <Text style={styles.header1}>{presensi.tglPresensi}</Text>
+              </View>
               <View style={styles.marginBottom}></View>
               {presensi.storePresensi.tipeWaktu != 'shift' ? (
                 <View style={styles.column}>
                   <Text style={styles.header}>
-                    Jam Presensi{' '}
+                    Jam Absensi{' '}
                     {presensi.storePresensi.tipePresensi == 'jam-masuk'
                       ? 'Masuk'
                       : 'Pulang'}
@@ -504,7 +511,9 @@ export default function Home() {
                         </Text>
                       ) : (
                         <Text style={styles.info}>
-                          {presensi.timePresensiShift.jam_akhir_pulang}
+                          {presensi.storePresensi.tipePresensi == 'jam-masuk'
+                            ? presensi.timePresensiShift.jam_akhir_masuk
+                            : presensi.timePresensiShift.jam_akhir_pulang}
                         </Text>
                       )}
                     </View>
@@ -616,7 +625,7 @@ export default function Home() {
                 onDismiss={onDismissSnackBarSuccess}
                 style={{backgroundColor: '#0bc663'}}>
                 <Text style={{color: '#fff', fontSize: 18}}>
-                  Berhasil melakukan presensi
+                  {success}
                 </Text>
               </Snackbar>
               <Snackbar
@@ -661,7 +670,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 10,
-    height: 280,
+    height: 300,
     display: 'flex',
     flexDirection: 'column',
     padding: 16,
@@ -671,7 +680,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 10,
-    height: 330,
+    height: 350,
     display: 'flex',
     flexDirection: 'column',
     padding: 16,

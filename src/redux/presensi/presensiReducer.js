@@ -13,6 +13,7 @@ import {
   SET_CODE_QR,
   SET_ENABLE_PRESENSI,
   SET_TIME_PRESENSI_SHIFT,
+  FETCH_HARI_PRESENSI,
 } from './presensiTypes';
 
 const initialState = {
@@ -24,6 +25,7 @@ const initialState = {
   isAbleToPresensi: null,
   tanggalPresensi: null,
   presensi: null,
+  tglPresensi: null,
   timePresensiShift: {
     jam_mulai_masuk: null,
     jam_akhir_masuk: null,
@@ -44,6 +46,7 @@ const initialState = {
     latitudePresensi: null,
     longitudePresensi: null,
     activityCode: null,
+    jamAkhirPulang: null
   },
 };
 
@@ -98,6 +101,7 @@ const presensiReducer = (state = initialState, action) => {
           waktuMulaiPresensi: action.waktuMulaiPresensi,
           waktuKerja: action.waktuKerja,
           activityCode: action.activityCode,
+          jamAkhirPulang: action.jamAkhirPulang
         },
       };
     case FETCH_TIPE_PEGAWAI_PRESENSI_SHIFT:
@@ -120,8 +124,14 @@ const presensiReducer = (state = initialState, action) => {
           waktuShift: action.waktuShift,
           waktuMulaiPresensi: action.waktuMulaiPresensi,
           waktuKerja: action.waktuKerja,
+          jamAkhirPulang: action.jamAkhirPulang
         },
       };
+    case FETCH_HARI_PRESENSI:
+      return {
+        ...state,
+        tglPresensi: action.tglPresensi
+      }
     case SET_CODE_QR:
       return {
         ...state,

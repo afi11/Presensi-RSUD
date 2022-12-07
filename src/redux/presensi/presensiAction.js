@@ -16,6 +16,7 @@ import {
   SET_CODE_QR,
   SET_ENABLE_PRESENSI,
   SET_TIME_PRESENSI_SHIFT,
+  FETCH_HARI_PRESENSI,
 } from './presensiTypes';
 
 const putPresensiMasuk = (masuk, telat) => {
@@ -48,6 +49,13 @@ const putTimePresensi = presensi => {
   };
 };
 
+const putHariPresensi = tglPresensi => {
+  return {
+    type: FETCH_HARI_PRESENSI,
+    tglPresensi: tglPresensi,
+  };
+};
+
 export const putFormLokasiPresensi = (jarakPresensi, lat, long) => {
   return {
     type: FETCH_LOKASI_PRESENSI,
@@ -65,6 +73,7 @@ export const putFormTipePegawaiPresensi = (
   waktuMulaiPresensi,
   waktuKerja,
   activityCode,
+  jamPulang,
 ) => {
   return {
     type: FETCH_TIPE_PEGAWAI_PRESENSI,
@@ -75,6 +84,7 @@ export const putFormTipePegawaiPresensi = (
     waktuMulaiPresensi: waktuMulaiPresensi,
     waktuKerja: waktuKerja,
     activityCode: activityCode,
+    jamAkhirPulang: jamPulang,
   };
 };
 
@@ -98,6 +108,7 @@ export const putWaktuPresensiShift = (
   waktuShift,
   waktuMulaiPresensi,
   waktuKerja,
+  jamPulang
 ) => {
   return {
     type: FETCH_WAKTU_PRESENSI_SHIFT,
@@ -105,6 +116,7 @@ export const putWaktuPresensiShift = (
     waktuShift: waktuShift,
     waktuMulaiPresensi: waktuMulaiPresensi,
     waktuKerja: waktuKerja,
+    jamAkhirPulang: jamPulang
   };
 };
 
@@ -193,6 +205,7 @@ export const fetchDataPresensi = (pegawaiCode, currentData, activityCode) => {
             response.activityCode != null
               ? response.activityCode.activityCode
               : null,
+            response.data.jam_akhir_pulang,
           ),
         );
       } else {
@@ -221,6 +234,7 @@ export const fetchDataPresensi = (pegawaiCode, currentData, activityCode) => {
               response.data[0].shift,
               response.data[0].jam_awal_pulang,
               response.data[0].jam_akhir_pulang,
+              response.data[0].jam_akhir_pulang
             ),
           );
         }
@@ -232,6 +246,7 @@ export const fetchDataPresensi = (pegawaiCode, currentData, activityCode) => {
       }
       dispatch(putTimePresensi(response.data));
       dispatch(putEnablePresensi(response.isAblePresensi));
+      dispatch(putHariPresensi(response.tglPresensi));
     });
   };
 };
