@@ -50,6 +50,8 @@ export default function Home() {
   const [visibleSuccess, setVisibleSuccess] = useState(false);
   const [visibleFailed, setVisibleFailed] = useState(false);
 
+  const [pegawaiCode, setPegawaiCode] = useState(null);
+
   const onShowSnackBarSuccess = () => setVisibleSuccess(true);
   const onShowSnackBarFailed = () => setVisibleFailed(true);
 
@@ -170,6 +172,7 @@ export default function Home() {
   // FETCH WAKTU PRESENSI
   useEffect(() => {
     getUserId().then(res => {
+      setPegawaiCode(res);
       dispatch(
         fetchDataPresensi(res, genDateNow(), presensi.activityCodePresensi),
       );
@@ -286,7 +289,6 @@ export default function Home() {
         .then(res => {
           setLoading(false);
           //console.log(res);
-          setSuccess(res.message);
           if (res.code == 200) {
             getUserId().then(res => {
               //console.log(res);
@@ -297,8 +299,14 @@ export default function Home() {
                   presensi.activityCodePresensi,
                 ),
               );
-              onShowSnackBarSuccess();
             });
+            if (res.status == true) {
+              setSuccess(res.message);
+              onShowSnackBarSuccess();
+            } else {
+              setError(res.message);
+              onShowSnackBarFailed();
+            }
           } else {
             setError('QR Code tidak dikenali');
             onShowSnackBarFailed();
@@ -306,7 +314,7 @@ export default function Home() {
         })
         .catch(err => {
           //console.log(err);
-          //setError(err);
+          setError(err);
           onShowSnackBarFailed();
         });
     } else {
@@ -315,8 +323,7 @@ export default function Home() {
           POST_DATA(`/send-presensi-v2/${qr}`, presensi.storePresensi)
             .then(res => {
               setLoading(false);
-              console.log(res);
-              setSuccess(res.message);
+              //console.log(res);
               if (res.code == 200) {
                 getUserId().then(res => {
                   console.log(res);
@@ -327,8 +334,14 @@ export default function Home() {
                       presensi.activityCodePresensi,
                     ),
                   );
-                  onShowSnackBarSuccess();
                 });
+                if (res.status == true) {
+                  setSuccess(res.message);
+                  onShowSnackBarSuccess();
+                } else {
+                  setError(res.message);
+                  onShowSnackBarFailed();
+                }
               } else {
                 setError('QR Code tidak dikenali');
                 onShowSnackBarFailed();
@@ -336,7 +349,7 @@ export default function Home() {
             })
             .catch(err => {
               console.log(err);
-              //setError(err);
+              setError(err);
               onShowSnackBarFailed();
             });
         } else {
@@ -438,6 +451,10 @@ export default function Home() {
               <Text style={styles.header2}>
                 Jl. Kapten Tendean No.16, Pakunden, Kec. Pesantren, Kota Kediri
               </Text>
+              <View style={styles.row}>
+                <Text style={styles.header}>Kode Pegawai</Text>
+                <Text style={styles.header1}>{pegawaiCode}</Text>
+              </View>
               <View style={styles.row}>
                 <Text style={styles.header}>Tanggal</Text>
                 <Text style={styles.header1}>{presensi.tglPresensi}</Text>
@@ -624,9 +641,7 @@ export default function Home() {
                 visible={visibleSuccess}
                 onDismiss={onDismissSnackBarSuccess}
                 style={{backgroundColor: '#0bc663'}}>
-                <Text style={{color: '#fff', fontSize: 18}}>
-                  {success}
-                </Text>
+                <Text style={{color: '#fff', fontSize: 18}}>{success}</Text>
               </Snackbar>
               <Snackbar
                 visible={visibleFailed}
@@ -670,7 +685,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 10,
-    height: 300,
+    height: 330,
     display: 'flex',
     flexDirection: 'column',
     padding: 16,
@@ -680,7 +695,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 10,
-    height: 350,
+    height: 380,
     display: 'flex',
     flexDirection: 'column',
     padding: 16,
@@ -725,6 +740,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 5,
   },
   column: {
     flexDirection: 'column',
