@@ -6,8 +6,6 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   StyleSheet,
-  StatusBar,
-  RefreshControl,
   useColorScheme,
 } from 'react-native';
 import {useNavigation, useIsFocused} from '@react-navigation/native';
@@ -87,7 +85,7 @@ const mingguIni = () => {
             <CardRiwayatPresensi
               tanggalPresensi={item.tanggalPresensi}
               telat={
-                item.idRuleTelatMasuk != null || item.idRuleLewatPulang != null
+                item.isTelat == 1
                   ? true
                   : false
               }
@@ -156,7 +154,7 @@ const bulanIni = () => {
           <CardRiwayatPresensi
             tanggalPresensi={item.tanggalPresensi}
             telat={
-              item.idRuleTelatMasuk != null || item.idRuleLewatPulang != null
+              item.isTelat == 1
                 ? true
                 : false
             }

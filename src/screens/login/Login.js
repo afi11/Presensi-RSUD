@@ -75,7 +75,7 @@ export default function Login({navigation}) {
       <View style={styles.loginContainer}>
         <Image
           style={styles.imgLogo}
-          source={require('../../assets/images/logo.png')}
+          source={require('../../assets/images/rg-berbenah.png')}
         />
         <Text style={styles.textHeader}>Selamat Datang</Text>
         <Text style={styles.textHeader2}>

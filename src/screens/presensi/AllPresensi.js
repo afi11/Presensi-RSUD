@@ -149,7 +149,7 @@ export default function AllPresensi({navigation}) {
             <CardRiwayatPresensi
               tanggalPresensi={item.tanggalPresensi}
               telat={
-                item.idRuleTelatMasuk != null || item.idRuleLewatPulang != null
+                item.isTelat == 1
                   ? true
                   : false
               }
