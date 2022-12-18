@@ -117,7 +117,7 @@ const Cuti = () => {
         }}>
         Riwayat Cuti
       </Text>
-      {izin.izins.length > 0 ? (
+      {izin.izins != null ? (
         <FlatList
           data={izin.izins}
           renderItem={({item}) =>

@@ -2,7 +2,7 @@ import {FETCH_IZIN_DATA, FETCH_RULE_IZIN, SET_FORM_IZIN} from './izinTypes';
 
 const initialState = {
   ruleIzins: [],
-  izins: [],
+  izins: null,
   ruleIzin: {
     pegawaiCode: null,
     idRuleIzin: null,

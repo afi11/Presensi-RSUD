@@ -150,15 +150,15 @@ export default function AllPresensi({navigation}) {
               tanggalPresensi={item.tanggalPresensi}
               telat={item.isTelat}
               jamMasuk={
-                (item.jamMasuk != null ? item.jamMasuk : '-') +
+                (item.jamMasuk != null ? item.jamMasuk : '') +
                 '  ' +
-                (item.telatMasuk != null ? item.telatMasuk : '') +
+                (item.totalTelatMasuk != null ? "TL : "+item.totalTelatMasuk : '') +
                 (item.tempat1 != null ? '  ' + item.tempat1 : '')
               }
               jamPulang={
                 (item.jamPulang != null ? item.jamPulang : '-') +
                 '  ' +
-                (item.telatPulang != null ? item.telatPulang : '') +
+                (item.totalLewatPulang != null ? "PSW : "+item.totalLewatPulang : '') +
                 (item.tempat2 != null ? '  ' + item.tempat2 : '')
               }
             />

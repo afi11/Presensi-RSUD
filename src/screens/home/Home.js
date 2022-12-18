@@ -56,7 +56,7 @@ export default function Home() {
 
   const onDismissSnackBarSuccess = () => setVisibleSuccess(false);
   const onDismissSnackBarFailed = () => setVisibleFailed(false);
-  
+
   const [pegawaiCode, setPegawaiCode] = useState(null);
   const presensi = useSelector(state => state.presensi);
   const dispatch = useDispatch();
@@ -618,7 +618,9 @@ export default function Home() {
                     text={
                       presensi.storePresensi.tipePresensi == 'jam-masuk'
                         ? 'Absen Masuk Sekarang '
-                        : 'Absen Pulang Sekarang'
+                        : presensi.storePresensi.tipePresensi == 'jam-pulang'
+                        ? 'Absen Pulang Sekarang'
+                        : 'Belum Waktunya Absen'
                     }
                   />
                 )
@@ -630,8 +632,10 @@ export default function Home() {
                   enable={false}
                   text={
                     presensi.storePresensi.tipePresensi == 'jam-masuk'
-                      ? 'Absen Masuk Sekarang '
-                      : 'Absen Pulang Sekarang'
+                        ? 'Absen Masuk Sekarang '
+                        : presensi.storePresensi.tipePresensi == 'jam-pulang'
+                        ? 'Absen Pulang Sekarang'
+                        : 'Belum Waktunya Absen'
                   }
                 />
               )}
