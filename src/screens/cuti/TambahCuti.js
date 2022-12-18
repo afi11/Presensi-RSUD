@@ -21,6 +21,7 @@ import {
   InputPickerFile,
 } from '../../components';
 import DocumentPicker from 'react-native-document-picker';
+import {Snackbar} from 'react-native-paper';
 import {changeFormIzin, fetchRuleIzin} from '../../redux';
 import {getTimeNow, getUserId} from '../../config';
 import {POST_DATA} from '../../services';
@@ -28,6 +29,16 @@ import {POST_DATA} from '../../services';
 function TambahCuti({route, navigation}) {
   const isDarkMode = useColorScheme() === 'dark';
   const {nama, jabatan, nik, namaDivisi} = route.params;
+  const [success, setSuccess] = useState('');
+
+  const [visibleSuccess, setVisibleSuccess] = useState(false);
+  const [visibleFailed, setVisibleFailed] = useState(false);
+
+  const onShowSnackBarSuccess = () => setVisibleSuccess(true);
+  const onShowSnackBarFailed = () => setVisibleFailed(true);
+
+  const onDismissSnackBarSuccess = () => setVisibleSuccess(false);
+  const onDismissSnackBarFailed = () => setVisibleFailed(false);
 
   const [tipeIzin, setTipeIzin] = useState(0);
   const [dateAwal, setDateAwal] = useState(new Date());
@@ -116,8 +127,14 @@ function TambahCuti({route, navigation}) {
       POST_DATA('/send-izin', izin.ruleIzin)
         .then(response => {
           setLoading(false);
-          console.log(response);
-          goBack();
+          if(response.status){
+            setSuccess(response.message);
+            onShowSnackBarSuccess();
+            goBack();
+          }else{
+            setError(response.message);
+            onShowSnackBarFailed();
+          }
         })
         .catch(err => {
           setLoading(false);
@@ -279,6 +296,20 @@ function TambahCuti({route, navigation}) {
           openCloseDateAkhir();
         }}
       />
+      <View style={{alignItems: 'center'}}>
+        <Snackbar
+          visible={visibleSuccess}
+          onDismiss={onDismissSnackBarSuccess}
+          style={{backgroundColor: '#0bc663'}}>
+          <Text style={{color: '#fff', fontSize: 18}}>{success}</Text>
+        </Snackbar>
+        <Snackbar
+          visible={visibleFailed}
+          onDismiss={onDismissSnackBarFailed}
+          style={{backgroundColor: '#cc1616'}}>
+          <Text style={{color: '#fff', fontSize: 18}}>{error}</Text>
+        </Snackbar>
+      </View>
     </SafeAreaView>
   );
 }

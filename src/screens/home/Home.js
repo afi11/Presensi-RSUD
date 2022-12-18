@@ -47,17 +47,17 @@ export default function Home() {
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
   const [visibleSuccess, setVisibleSuccess] = useState(false);
   const [visibleFailed, setVisibleFailed] = useState(false);
-
-  const [pegawaiCode, setPegawaiCode] = useState(null);
 
   const onShowSnackBarSuccess = () => setVisibleSuccess(true);
   const onShowSnackBarFailed = () => setVisibleFailed(true);
 
   const onDismissSnackBarSuccess = () => setVisibleSuccess(false);
   const onDismissSnackBarFailed = () => setVisibleFailed(false);
-
+  
+  const [pegawaiCode, setPegawaiCode] = useState(null);
   const presensi = useSelector(state => state.presensi);
   const dispatch = useDispatch();
 

@@ -84,11 +84,7 @@ const mingguIni = () => {
           renderItem={({item}) => (
             <CardRiwayatPresensi
               tanggalPresensi={item.tanggalPresensi}
-              telat={
-                item.isTelat == 1
-                  ? true
-                  : false
-              }
+              telat={item.isTelat}
               jamMasuk={
                 (item.jamMasuk != null ? item.jamMasuk : '') +
                 '  ' +
@@ -153,11 +149,7 @@ const bulanIni = () => {
         renderItem={({item}) => (
           <CardRiwayatPresensi
             tanggalPresensi={item.tanggalPresensi}
-            telat={
-              item.isTelat == 1
-                ? true
-                : false
-            }
+            telat={item.isTelat}
             jamMasuk={
               (item.jamMasuk != null ? item.jamMasuk : '') +
               '  ' +

@@ -148,20 +148,18 @@ export default function AllPresensi({navigation}) {
           renderItem={({item}) => (
             <CardRiwayatPresensi
               tanggalPresensi={item.tanggalPresensi}
-              telat={
-                item.isTelat == 1
-                  ? true
-                  : false
-              }
+              telat={item.isTelat}
               jamMasuk={
-                (item.jamMasuk != null ? item.jamMasuk : "-" ) +
+                (item.jamMasuk != null ? item.jamMasuk : '-') +
                 '  ' +
-                (item.telatMasuk != null ? item.telatMasuk : '') + (item.tempat1 != null ? '  '+item.tempat1 : "")
+                (item.telatMasuk != null ? item.telatMasuk : '') +
+                (item.tempat1 != null ? '  ' + item.tempat1 : '')
               }
               jamPulang={
-                (item.jamPulang != null ? item.jamPulang : "-") +
+                (item.jamPulang != null ? item.jamPulang : '-') +
                 '  ' +
-                (item.telatPulang != null ? item.telatPulang : '') + (item.tempat2 != null ? '  '+item.tempat2 : "")
+                (item.telatPulang != null ? item.telatPulang : '') +
+                (item.tempat2 != null ? '  ' + item.tempat2 : '')
               }
             />
           )}

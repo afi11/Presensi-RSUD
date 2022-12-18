@@ -11,14 +11,20 @@ const CardRiwayatPresensi = ({tanggalPresensi, telat, jamMasuk, jamPulang}) => {
             {moment(tanggalPresensi).format('D MMMM YYYY')}
           </Text>
           {jamMasuk != null && jamPulang != null ? (
-            telat ? (
+            telat == 0 ? (
               <View style={styles.rowLate}>
                 <Text style={styles.textRowLate}>Telat</Text>
               </View>
-            ) : (
+            ) : telat == 1 ? (
               <View style={styles.rowNotLate}>
                 <Text style={styles.textRowNotLate}>Tepat Waktu</Text>
               </View>
+            ) : telat == 2 ? (
+              <View style={styles.rowNotAbsenPulang}>
+                <Text style={styles.textRowNotAbsenPulang}>Izin</Text>
+              </View>
+            ) : (
+              <></>
             )
           ) : (
             <></>
@@ -59,6 +65,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: 90,
     alignItems: 'center',
+  },
+  rowNotAbsenPulang: {
+    backgroundColor: '#ffe1b2',
+    padding: 2,
+    borderRadius: 5,
+    width: 90,
+    alignItems: 'center',
+  },
+  textRowNotAbsenPulang: {
+    color: '#bc7803',
   },
   textRowNotLate: {
     color: '#42CCA9',
