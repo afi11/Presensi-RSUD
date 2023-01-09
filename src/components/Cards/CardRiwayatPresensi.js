@@ -11,11 +11,11 @@ const CardRiwayatPresensi = ({tanggalPresensi, telat, jamMasuk, jamPulang}) => {
             {moment(tanggalPresensi).format('D MMMM YYYY')}
           </Text>
           {jamMasuk != null && jamPulang != null ? (
-            telat == 0 ? (
+            telat == 1 ? (
               <View style={styles.rowLate}>
                 <Text style={styles.textRowLate}>Telat</Text>
               </View>
-            ) : telat == 1 ? (
+            ) : telat == 0 ? (
               <View style={styles.rowNotLate}>
                 <Text style={styles.textRowNotLate}>Tepat Waktu</Text>
               </View>

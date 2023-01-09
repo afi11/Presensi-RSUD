@@ -94,7 +94,7 @@ const mingguIni = () => {
               jamPulang={
                 (item.jamPulang != null ? item.jamPulang : '-') +
                 '  ' +
-                (item.totalLewatPulang != null ? "PSW : "+item.totalLewatPulang : '') +
+                (item.totalTelatPulang != null ? "TL : "+item.totalTelatPulang : '') +
                 (item.tempat2 != null ? '  ' + item.tempat2 : '')
               }
             />
@@ -159,7 +159,7 @@ const bulanIni = () => {
             jamPulang={
               (item.jamPulang != null ? item.jamPulang : '-') +
               '  ' +
-              (item.totalLewatPulang != null ? "PSW : "+item.totalLewatPulang : '') +
+              (item.totalTelatPulang != null ? "TL : "+item.totalTelatPulang : '') +
               (item.tempat2 != null ? '  ' + item.tempat2 : '')
             }
           />

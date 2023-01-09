@@ -158,7 +158,7 @@ export default function AllPresensi({navigation}) {
               jamPulang={
                 (item.jamPulang != null ? item.jamPulang : '-') +
                 '  ' +
-                (item.totalLewatPulang != null ? "PSW : "+item.totalLewatPulang : '') +
+                (item.totalTelatPulang != null ? "TL : "+item.totalTelatPulang : '') +
                 (item.tempat2 != null ? '  ' + item.tempat2 : '')
               }
             />

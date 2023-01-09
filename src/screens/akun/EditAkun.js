@@ -51,16 +51,21 @@ function EditAkun({route, navigation}) {
   };
 
   const updateProfil = () => {
+    console.log(auth.userUpdate.code);
     if (auth.userUpdate.password == auth.userUpdate.konfirmasiPassword) {
-      UPDATE_DATA('update_profil', auth.userUpdate.code, auth.userUpdate)
+      UPDATE_DATA("update_profil", auth.userUpdate.code, auth.userUpdate)
         .then(() => {
-          goBack();
+          getUserId().then(res => {
+            alert('Berhasil update profil');
+            dispatch(putFormProfilUpdate('code', res));
+          });
         })
         .catch(err => {
+          alert(err);
           console.log(err);
         });
     } else {
-      alert('Konfirmasi Password tidak sama');
+     alert('Konfirmasi Password tidak sama');
     }
   };
 

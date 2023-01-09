@@ -54,7 +54,7 @@ function TambahCuti({route, navigation}) {
   const handleDocumentSelection = useCallback(async () => {
     try {
       const response = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
+        type: [DocumentPicker.types.pdf, DocumentPicker.types.images],
       });
       dispatch(changeFormIzin('tipefile', response[0].type));
       RNFetchBlob.fs
@@ -252,7 +252,7 @@ function TambahCuti({route, navigation}) {
             </View>
           </View>
           <InputPickerFile
-            label="Ambil Dokumen"
+            label="Ambil Dokumen (pdf / images)"
             onPress={() => handleDocumentSelection()}
             fileName={
               fileResponse != null ? fileResponse[0].name : 'Belum dipilih'
