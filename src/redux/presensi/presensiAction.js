@@ -17,6 +17,7 @@ import {
   SET_ENABLE_PRESENSI,
   SET_TIME_PRESENSI_SHIFT,
   FETCH_HARI_PRESENSI,
+  SET_FORM_LUPA_ABSEN_PULANG,
 } from './presensiTypes';
 
 const putPresensiMasuk = (masuk, telat) => {
@@ -131,6 +132,13 @@ export const putWaktuPresensiUser = waktuUser => {
   return {
     type: FETCH_WAKTU_PRESENSI_USER,
     waktuPresensiUser: waktuUser,
+  };
+};
+
+export const changeFormLupaAbsen = (data) => {
+  return {
+    type: SET_FORM_LUPA_ABSEN_PULANG,
+    payload: data
   };
 };
 

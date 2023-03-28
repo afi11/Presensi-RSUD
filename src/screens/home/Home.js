@@ -30,9 +30,11 @@ import {
   putWaktuPresensiUser,
   setQRCode,
   setTimePresensiShift,
+  changeFormLupaAbsen,
 } from '../../redux';
 import {genDateNow, getTimeNow, getUserId} from '../../config';
-import {POST_DATA} from '../../services';
+import {GET_DATA, POST_DATA} from '../../services';
+import {ButtonTidakAbsenPulang} from '../../components/Buttons';
 
 export default function Home() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -47,6 +49,8 @@ export default function Home() {
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  const [dataNoAbsenPlg, setDataNoAbsenPlg] = useState(null);
 
   const [visibleSuccess, setVisibleSuccess] = useState(false);
   const [visibleFailed, setVisibleFailed] = useState(false);
@@ -78,6 +82,16 @@ export default function Home() {
       setRefreshing(false);
     });
   }, []);
+
+  const presensiNoQR = () => {
+    dispatch(putWaktuPresensiUser(getTimeNow()));
+    if (parseInt(presensi.storePresensi.jarakPresensi) <= 80) {
+      startPresensiNoQR();
+    } else {
+      setError('Silahkan absen pada area RSUD GAMBIRAN ');
+      onShowSnackBarFailed();
+    }
+  };
 
   const onBarcodeScan = result => {
     setQrvalue(result);
@@ -280,6 +294,82 @@ export default function Home() {
     );
   };
 
+  const sendIzinShiftNoAbsenPulang = () => {
+    setLoading(true);
+    GET_DATA(`send-tidak-absen-pulang/${presensi.activityCodePresensi}`)
+      .then(res => {
+        setLoading(false);
+        setSuccess(res.message);
+        onShowSnackBarSuccess();
+        getUserId().then(res => {
+          dispatch(
+            fetchDataPresensi(res, genDateNow(), presensi.activityCodePresensi),
+          );
+        });
+      })
+      .catch(err => {
+        //console.log(err);
+        setError(err);
+        onShowSnackBarFailed();
+      });
+  };
+
+  const startPresensiNoQR = () => {
+    if (presensi.storePresensi.tipeWaktu != 'shift') {
+      setLoading(true);
+      POST_DATA(`/send-presensi-no-qr`, presensi.storePresensi)
+        .then(res => {
+          setLoading(false);
+          setSuccess(res.message);
+          onShowSnackBarSuccess();
+          //console.log(res);
+          getUserId().then(res => {
+            dispatch(
+              fetchDataPresensi(
+                res,
+                genDateNow(),
+                presensi.activityCodePresensi,
+              ),
+            );
+          });
+        })
+        .catch(err => {
+          //console.log(err);
+          setError(err);
+          onShowSnackBarFailed();
+        });
+    } else {
+      if (presensi.storePresensi.tipeWaktu == 'shift') {
+        if (presensi.storePresensi.idWaktu != null) {
+          POST_DATA(`/send-presensi-no-qr`, presensi.storePresensi)
+            .then(res => {
+              setLoading(false);
+              setSuccess(res.message);
+              onShowSnackBarSuccess();
+              //console.log(res);
+              getUserId().then(res => {
+                console.log(res);
+                dispatch(
+                  fetchDataPresensi(
+                    res,
+                    genDateNow(),
+                    presensi.activityCodePresensi,
+                  ),
+                );
+              });
+            })
+            .catch(err => {
+              console.log(err);
+              setError(err);
+              onShowSnackBarFailed();
+            });
+        } else {
+          alert('Jadwal Shift Harus Dipilih');
+        }
+      }
+    }
+  };
+
   const startPresensi = qr => {
     // console.log(qr);
     // console.log(presensi.storePresensi);
@@ -415,7 +505,7 @@ export default function Home() {
                 latitude: -7.839502,
                 longitude: 112.031919,
               }}
-              radius={100}
+              radius={80}
               strokeWidth={2}
               strokeColor={
                 presensi.storePresensi.jarakPresensi == null
@@ -612,9 +702,48 @@ export default function Home() {
                 loading ? (
                   <ButtonLoading tulisan="Loading..." />
                 ) : (
+                  <>
+                    <ButtonPresensi
+                      onPress={presensiNoQR}
+                      enable={true}
+                      text={
+                        presensi.storePresensi.tipePresensi == 'jam-masuk'
+                          ? 'Absen Masuk Sekarang '
+                          : presensi.storePresensi.tipePresensi == 'jam-pulang'
+                          ? 'Absen Pulang Sekarang'
+                          : 'Belum Waktunya Absen'
+                      }
+                    />
+                    {presensi.storePresensi.tipePresensi == 'jam-pulang' ? (
+                      <>
+                        <Text
+                          style={{
+                            color: '#000',
+                            fontSize: 16,
+                            marginTop: 8,
+                            textAlign: 'center',
+                          }}>
+                          Bila lupa absen pulang tanggal {presensi.tglPresensi}{' '}
+                          klik tombol dibawah ini!
+                        </Text>
+                        <ButtonTidakAbsenPulang
+                          onPress={sendIzinShiftNoAbsenPulang}
+                          enable={true}
+                          text="Belum Absen Pulang, Klik Disini"
+                        />
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                )
+              ) : loading ? (
+                <ButtonLoading tulisan="Loading..." />
+              ) : (
+                <>
                   <ButtonPresensi
-                    onPress={onOpneScanner}
-                    enable={true}
+                    onPress={presensiNoQR}
+                    enable={false}
                     text={
                       presensi.storePresensi.tipePresensi == 'jam-masuk'
                         ? 'Absen Masuk Sekarang '
@@ -623,21 +752,28 @@ export default function Home() {
                         : 'Belum Waktunya Absen'
                     }
                   />
-                )
-              ) : loading ? (
-                <ButtonLoading tulisan="Loading..." />
-              ) : (
-                <ButtonPresensi
-                  onPress={onOpneScanner}
-                  enable={false}
-                  text={
-                    presensi.storePresensi.tipePresensi == 'jam-masuk'
-                        ? 'Absen Masuk Sekarang '
-                        : presensi.storePresensi.tipePresensi == 'jam-pulang'
-                        ? 'Absen Pulang Sekarang'
-                        : 'Belum Waktunya Absen'
-                  }
-                />
+                  {presensi.storePresensi.tipePresensi == 'jam-pulang' ? (
+                    <>
+                      <Text
+                        style={{
+                          color: '#000',
+                          fontSize: 16,
+                          marginTop: 8,
+                          textAlign: 'center',
+                        }}>
+                        Bila lupa absen pulang tanggal {presensi.tglPresensi}{' '}
+                        klik tombol dibawah ini!
+                      </Text>
+                      <ButtonTidakAbsenPulang
+                        onPress={sendIzinShiftNoAbsenPulang}
+                        enable={true}
+                        text="Belum Absen Pulang, Klik Disini"
+                      />
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </>
               )}
             </View>
             <View style={{alignItems: 'center'}}>
@@ -689,7 +825,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 10,
-    height: 330,
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
     padding: 16,
@@ -699,7 +835,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 10,
-    height: 380,
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
     padding: 16,

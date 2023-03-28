@@ -6,6 +6,7 @@ import ButtonRadio from './ButtonRadio';
 import ButtonLoading from './ButtonLoading';
 import ButtonDetIzin from './ButtonDetIzin';
 import ButtonBatalIzin from './ButtonBatalIzin';
+import ButtonTidakAbsenPulang from './ButtonTidakAbsenPulang';
 
 export {
   ButtonLogin,
@@ -16,4 +17,5 @@ export {
   ButtonLoading,
   ButtonDetIzin,
   ButtonBatalIzin,
+  ButtonTidakAbsenPulang
 };

@@ -14,6 +14,7 @@ import {
   SET_ENABLE_PRESENSI,
   SET_TIME_PRESENSI_SHIFT,
   FETCH_HARI_PRESENSI,
+  SET_FORM_LUPA_ABSEN_PULANG,
 } from './presensiTypes';
 
 const initialState = {
@@ -48,6 +49,7 @@ const initialState = {
     activityCode: null,
     jamAkhirPulang: null
   },
+  izinNoAbsenPulang: null,
 };
 
 const presensiReducer = (state = initialState, action) => {
@@ -171,6 +173,11 @@ const presensiReducer = (state = initialState, action) => {
           jam_akhir_pulang: action.jam_akhir_pulang,
         },
       };
+    case SET_FORM_LUPA_ABSEN_PULANG:
+      return {
+        ...state,
+        izinNoAbsenPulang: action.payload,
+      }
     default:
       return state;
   }

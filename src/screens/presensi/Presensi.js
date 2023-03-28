@@ -89,13 +89,13 @@ const mingguIni = () => {
                 (item.jamMasuk != null ? item.jamMasuk : '') +
                 '  ' +
                 (item.totalTelatMasuk != null ? "TL : "+item.totalTelatMasuk : '') +
-                (item.tempat1 != null ? '  ' + item.tempat1 : '')
+                (item.jarakJamMasuk != null ? ' ' + item.jarakJamMasuk + 'm' : '')
               }
               jamPulang={
                 (item.jamPulang != null ? item.jamPulang : '-') +
                 '  ' +
                 (item.totalTelatPulang != null ? "TL : "+item.totalTelatPulang : '') +
-                (item.tempat2 != null ? '  ' + item.tempat2 : '')
+                (item.jarakJamPulang != null ? ' ' + item.jarakJamPulang + 'm' : '')
               }
             />
           )}
@@ -154,13 +154,13 @@ const bulanIni = () => {
               (item.jamMasuk != null ? item.jamMasuk : '') +
               '  ' +
               (item.totalTelatMasuk != null ? "TL : "+item.totalTelatMasuk : '') +
-              (item.tempat1 != null ? '  ' + item.tempat1 : '')
+              (item.jarakJamMasuk != null ? ' ' + item.jarakJamMasuk + 'm' : '')
             }
             jamPulang={
               (item.jamPulang != null ? item.jamPulang : '-') +
               '  ' +
               (item.totalTelatPulang != null ? "TL : "+item.totalTelatPulang : '') +
-              (item.tempat2 != null ? '  ' + item.tempat2 : '')
+              (item.jarakJamPulang != null ? ' ' + item.jarakJamPulang + 'm' : '')
             }
           />
         )}

@@ -22,6 +22,7 @@
     "moment": "^2.29.1",
     "react": "17.0.2",
     "react-native": "0.67.1",
+    "react-native-awesome-alerts": "^2.0.0",
     "react-native-bottom-action-sheet": "^2.0.2",
     "react-native-camera-kit": "^12.0.0",
     "react-native-date-picker": "^4.1.5",
