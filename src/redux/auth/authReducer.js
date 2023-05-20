@@ -9,6 +9,8 @@ const initialState = {
   user: {
     username: null,
     password: null,
+    origin_login: null,
+    device_id_android: null,
   },
   profil: {},
   userUpdate: {

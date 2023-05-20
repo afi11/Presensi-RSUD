@@ -714,7 +714,7 @@ export default function Home() {
                           : 'Belum Waktunya Absen'
                       }
                     />
-                    {presensi.storePresensi.tipePresensi == 'jam-pulang' ? (
+                    {presensi.storePresensi.tipePresensi == 'jam-pulang' && presensi.storePresensi.tipeWaktu == 'shift' ? (
                       <>
                         <Text
                           style={{
@@ -729,7 +729,7 @@ export default function Home() {
                         <ButtonTidakAbsenPulang
                           onPress={sendIzinShiftNoAbsenPulang}
                           enable={true}
-                          text="Belum Absen Pulang, Klik Disini"
+                          text="Lupa Absen Pulang, Klik Disini"
                         />
                       </>
                     ) : (
@@ -752,7 +752,7 @@ export default function Home() {
                         : 'Belum Waktunya Absen'
                     }
                   />
-                  {presensi.storePresensi.tipePresensi == 'jam-pulang' ? (
+                  {presensi.storePresensi.tipePresensi == 'jam-pulang' && presensi.storePresensi.tipeWaktu == 'shift' ? (
                     <>
                       <Text
                         style={{
@@ -767,7 +767,7 @@ export default function Home() {
                       <ButtonTidakAbsenPulang
                         onPress={sendIzinShiftNoAbsenPulang}
                         enable={true}
-                        text="Belum Absen Pulang, Klik Disini"
+                        text="Lupa Absen Pulang, Klik Disini"
                       />
                     </>
                   ) : (

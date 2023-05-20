@@ -4,11 +4,10 @@ import {
   Text,
   Image,
   StyleSheet,
-  TouchableOpacity,
   AsyncStorage,
   StatusBar,
-  useColorScheme,
 } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import RNRestart from 'react-native-restart';
 import {useSelector, useDispatch} from 'react-redux';
 import {
@@ -31,23 +30,35 @@ export default function Login({navigation}) {
   };
 
   const authLogin = () => {
-    setLoading(true);
-    POST_DATA('/auth/login', auth.user)
-      .then(res => {
-        setLoading(false);
-        AsyncStorage.setItem(
-          'user',
-          JSON.stringify({
-            token: 'Bearer ' + res.access_token,
-            userId: res.user.pegawai_code,
-          }),
-        );
-        RNRestart.Restart();
+    DeviceInfo.getFingerprint().then(fingerprint => {
+      setLoading(true);
+      POST_DATA('/auth/login', {
+        username: auth.user.username,
+        password: auth.user.password,
+        origin_login: 'android',
+        device_id_android: fingerprint,
       })
-      .catch(err => {
-        setLoading(false);
-        alert(err);
-      });
+        .then(res => {
+          setLoading(false);
+          if(!res.status){
+            alert(res.message)
+          }else{
+            AsyncStorage.setItem(
+              'user',
+              JSON.stringify({
+                token: 'Bearer ' + res.access_token,
+                userId: res.user.pegawai_code,
+              }),
+            );
+            RNRestart.Restart();
+          }
+        })
+        .catch(err => {
+          setLoading(false);
+          console.log(err);
+          alert(err);
+        });
+    });
   };
 
   // _retrieveData = async () => {
