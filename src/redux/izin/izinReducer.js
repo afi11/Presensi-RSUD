@@ -16,6 +16,7 @@ const initialState = {
     waktuPresensiUser: null,
     activityCode: null,
     activityCode2: null,
+    apk_baru: true
   },
 };
 

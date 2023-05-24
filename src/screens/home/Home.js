@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {
+  Alert,
   View,
   Text,
   StyleSheet,
@@ -295,23 +296,44 @@ export default function Home() {
   };
 
   const sendIzinShiftNoAbsenPulang = () => {
-    setLoading(true);
-    GET_DATA(`send-tidak-absen-pulang/${presensi.activityCodePresensi}`)
-      .then(res => {
-        setLoading(false);
-        setSuccess(res.message);
-        onShowSnackBarSuccess();
-        getUserId().then(res => {
-          dispatch(
-            fetchDataPresensi(res, genDateNow(), presensi.activityCodePresensi),
-          );
-        });
-      })
-      .catch(err => {
-        //console.log(err);
-        setError(err);
-        onShowSnackBarFailed();
-      });
+    return Alert.alert(
+      'KONFIRMASI',
+      'Apakah anda yakin, benar-benar lupa absen pada hari tersebut ?',
+      [
+        // The "Yes" button
+        {
+          text: 'Ya',
+          onPress: () => {
+            setLoading(true);
+            GET_DATA(`send-tidak-absen-pulang/${presensi.activityCodePresensi}`)
+              .then(res => {
+                setLoading(false);
+                setSuccess(res.message);
+                onShowSnackBarSuccess();
+                getUserId().then(res => {
+                  dispatch(
+                    fetchDataPresensi(
+                      res,
+                      genDateNow(),
+                      presensi.activityCodePresensi,
+                    ),
+                  );
+                });
+              })
+              .catch(err => {
+                //console.log(err);
+                setError(err);
+                onShowSnackBarFailed();
+              });
+          },
+        },
+        // The "No" button
+        // Does nothing but dismiss the dialog when tapped
+        {
+          text: 'Tidak',
+        },
+      ],
+    );
   };
 
   const startPresensiNoQR = () => {
@@ -535,7 +557,7 @@ export default function Home() {
                   : styles.containerPresensiShift
               }>
               <Text style={{color: '#000', fontSize: 12, textAlign: 'center'}}>
-                Tarik ke bawah untuk refresh lokasi
+                Tarik ke bawah untuk refresh lokasi, Geser peta untuk mengetahui lokasi
               </Text>
               <Text style={styles.header}>Lokasi</Text>
               <Text style={styles.header2}>
@@ -544,6 +566,10 @@ export default function Home() {
               <View style={styles.row}>
                 <Text style={styles.header}>Kode Pegawai</Text>
                 <Text style={styles.header1}>{pegawaiCode}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.header}>Pegawai</Text>
+                <Text style={styles.header1}>{presensi.pegawaiNama}</Text>
               </View>
               <View style={styles.row}>
                 <Text style={styles.header}>Tanggal</Text>
@@ -714,7 +740,8 @@ export default function Home() {
                           : 'Belum Waktunya Absen'
                       }
                     />
-                    {presensi.storePresensi.tipePresensi == 'jam-pulang' && presensi.storePresensi.tipeWaktu == 'shift' ? (
+                    {presensi.storePresensi.tipePresensi == 'jam-pulang' &&
+                    presensi.storePresensi.tipeWaktu == 'shift' ? (
                       <>
                         <Text
                           style={{
@@ -752,7 +779,8 @@ export default function Home() {
                         : 'Belum Waktunya Absen'
                     }
                   />
-                  {presensi.storePresensi.tipePresensi == 'jam-pulang' && presensi.storePresensi.tipeWaktu == 'shift' ? (
+                  {presensi.storePresensi.tipePresensi == 'jam-pulang' &&
+                  presensi.storePresensi.tipeWaktu == 'shift' ? (
                     <>
                       <Text
                         style={{

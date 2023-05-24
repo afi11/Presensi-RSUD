@@ -32,7 +32,7 @@ export default function Login({navigation}) {
   const authLogin = () => {
     DeviceInfo.getFingerprint().then(fingerprint => {
       setLoading(true);
-      POST_DATA('/auth/login', {
+      POST_DATA('/auth/login-v2', {
         username: auth.user.username,
         password: auth.user.password,
         origin_login: 'android',

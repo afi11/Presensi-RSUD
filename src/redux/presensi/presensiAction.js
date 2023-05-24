@@ -50,10 +50,11 @@ const putTimePresensi = presensi => {
   };
 };
 
-const putHariPresensi = tglPresensi => {
+const putHariPresensi = (tglPresensi, pegawaiNama) => {
   return {
     type: FETCH_HARI_PRESENSI,
     tglPresensi: tglPresensi,
+    pegawaiNama: pegawaiNama
   };
 };
 
@@ -149,10 +150,11 @@ const putEnablePresensi = status => {
   };
 };
 
-const putDatePresensiGoHome = tgl => {
+const putDatePresensiGoHome = (tgl, pegawaiNama) => {
   return {
     type: FETCH_DATE_PRESENSI_AFTER_GOHOME,
     tanggalPresensi: tgl,
+    pegawaiNama: pegawaiNama
   };
 };
 
@@ -250,11 +252,11 @@ export const fetchDataPresensi = (pegawaiCode, currentData, activityCode) => {
 
       if (response.activityCode != null) {
         dispatch(putActivityCodePresensi(response.activityCode.activityCode));
-        dispatch(putDatePresensiGoHome(response.activityCode.tanggalPresensi));
+        dispatch(putDatePresensiGoHome(response.activityCode.tanggalPresensi, response.pegawai_nama));
       }
       dispatch(putTimePresensi(response.data));
       dispatch(putEnablePresensi(response.isAblePresensi));
-      dispatch(putHariPresensi(response.tglPresensi));
+      dispatch(putHariPresensi(response.tglPresensi, response.pegawai_nama));
     });
   };
 };

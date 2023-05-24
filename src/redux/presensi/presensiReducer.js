@@ -25,6 +25,7 @@ const initialState = {
   activityCodePresensi: null,
   isAbleToPresensi: null,
   tanggalPresensi: null,
+  pegawaiNama: null,
   presensi: null,
   tglPresensi: null,
   timePresensiShift: {
@@ -47,7 +48,8 @@ const initialState = {
     latitudePresensi: null,
     longitudePresensi: null,
     activityCode: null,
-    jamAkhirPulang: null
+    jamAkhirPulang: null,
+    apk_baru: true,
   },
   izinNoAbsenPulang: null,
 };
@@ -90,6 +92,7 @@ const presensiReducer = (state = initialState, action) => {
       return {
         ...state,
         tanggalPresensi: action.tanggalPresensi,
+        pegawaiNama: action.pegawaiNama
       };
     case FETCH_TIPE_PEGAWAI_PRESENSI:
       return {
@@ -132,7 +135,8 @@ const presensiReducer = (state = initialState, action) => {
     case FETCH_HARI_PRESENSI:
       return {
         ...state,
-        tglPresensi: action.tglPresensi
+        tglPresensi: action.tglPresensi,
+        pegawaiNama: action.pegawaiNama
       }
     case SET_CODE_QR:
       return {
